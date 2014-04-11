@@ -1,0 +1,14 @@
+{
+    "require-dev": {
+        "phpspec/phpspec": "2.0.*@dev"
+    },
+
+    "autoload": {
+        "psr-4": {
+            "PragmaRX\\Zip\\": "src/"
+        }
+    },
+    "require": {
+        "guzzlehttp/guzzle": "~4.0"
+    }
+}
