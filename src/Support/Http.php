@@ -6,26 +6,28 @@ use GuzzleHttp\Client as Guzzle;
 
 class Http {
 
-	public function access()
+	public function access($url)
 	{
+		$client = new \GuzzleHttp\Client();
 
-		$client = new GuzzleHttp\Client();
-		$response = $client->get('http://guzzlephp.org');
-		$res = $client->get('https://api.github.com/user', ['auth' =>  ['user', 'pass']]);
-		echo $res->getStatusCode();
-		// 200
-		echo $res->getHeader('content-type');
-		// 'application/json; charset=utf8'
-		echo $res->getBody();
-		// {"type":"User"...'
-		var_export($res->json());
-		// Outputs the JSON decoded data
+		$response = $client->get($url);
 
+		if ($response->getStatusCode() != 200)
+		{
+			return false;
+		}
+
+		return json_decode($response->getBody(), true);
 	}
 
 	public function ping($url)
 	{
 		return true;
+	}
+
+	public function consume($url)
+	{
+		return $this->access($url);
 	}
 
 }
