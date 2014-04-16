@@ -2,7 +2,6 @@
 
 namespace PragmaRX\Zip;
 
-use PragmaRX\Zip\Exceptions\InvalidZip;
 use PragmaRX\Zip\Support\Http;
 use PragmaRX\Zip\Support\Address;
 
@@ -14,34 +13,125 @@ class Zip
 	 * @var array
 	 */
 	private $providers = array(
-		array(
-			'url' => 'http://republicavirtual.com.br/web_cep.php',
-			'query' => 'cep=%s&formato=json',
-			'_check_resultado' => '1',
-			'zip' => 'zip',
-			'state' => 'uf',
-			'city' => 'cidade',
-			'neighborhood' => 'bairro',
-			'street_kind' => 'tipo_logradouro',
-			'street_name' => 'logradouro',
+		'BR' => array(
+			'zip_length' => 8,
+			'providers' => array(
+				array(
+					'url' => 'http://viacep.com.br/',
+					'query' => 'ws/%s/json/',
+					'result_type' => 'json',
+					'zip_format' => '99999999',
+					'zip' => 'cep',
+					'state' => 'uf',
+					'city' => 'localidade',
+					'neighborhood' => 'bairro',
+					'street_kind' => null,
+					'street_name' => 'logradouro',
+					'code_in_country' => 'ibge',
+				),
+
+				array(
+					'url' => 'http://appservidor.com.br/webservice/cep',
+					'query' => '?CEP=%s',
+					'result_type' => 'json',
+					'zip_format' => '99999999',
+					'zip' => 'cep',
+					'state' => 'uf_sigla',
+					'state_name' => 'uf_nome',
+					'city' => 'cidade',
+					'neighborhood' => 'bairro',
+					'street_kind' => 'logradouro',
+					'street_name' => 'logradouro_nome',
+				),
+
+				array(
+					'url' => 'http://republicavirtual.com.br/web_cep.php',
+					'query' => '?cep=%s&formato=json',
+					'result_type' => 'json',
+					'zip_format' => '99999999',
+					'_check_resultado' => '1',
+					'zip' => 'zip',
+					'state' => 'uf',
+					'city' => 'cidade',
+					'neighborhood' => 'bairro',
+					'street_kind' => 'tipo_logradouro',
+					'street_name' => 'logradouro',
+				),
+
+				array(
+					'url' => 'http://cep.correiocontrol.com.br',
+					'query' => '/%s.json',
+					'result_type' => 'json',
+					'zip_format' => '99999999',
+					'zip' => 'cep',
+					'state' => 'uf',
+					'city' => 'localidade',
+					'neighborhood' => 'bairro',
+					'street_kind' => null,
+					'street_name' => 'logradouro',
+				),
+
+				array(
+					'url' => 'http://cep.correiocontrol.com.br',
+					'query' => '/%s.json',
+					'result_type' => 'json',
+					'zip_format' => '99999999',
+					'zip' => 'cep',
+					'state' => 'uf',
+					'city' => 'localidade',
+					'neighborhood' => 'bairro',
+					'street_kind' => null,
+					'street_name' => 'logradouro',
+				),
+
+				array(
+					'url' => 'http://clareslab.com.br',
+					'query' => '/ws/cep/json/%s/',
+					'result_type' => 'json',
+					'zip_format' => '99999-999',
+					'zip' => 'cep',
+					'state' => 'uf',
+					'city' => 'cidade',
+					'neighborhood' => 'bairro',
+					'street_kind' => null,
+					'street_name' => 'endereco',
+				),
+			),
+		),
+
+		'US' => array(
+			'zip_length' => 5,
+			'providers' => array(
+				array(
+					'country_code' => 'US',
+					'url' => 'http://zip.elevenbasetwo.com',
+					'query' => '/v2/US/%s',
+					'result_type' => 'json',
+					'zip_format' => '99999',
+					'zip' => 'zip',
+					'state' => 'state',
+					'city' => 'city',
+					'country' => 'country',
+					'street_kind' => null,
+					'street_name' => null,
+				),
+			),
 		),
 	);
 
-	private $addressFields = array(
-		'zip',
-		'state',
-		'city',
-		'neighborhood',
-		'street_kind',
-		'street_name',
-	);
-
-/**
+	/**
 	 * The HTTP class.
 	 *
 	 * @var Support\Http
 	 */
 	private $http;
+
+	/**
+	 * Current country.
+	 *
+	 * @var string
+	 */
+	private $country = 'BR';
 
 	/**
 	 * The current zip being searched.
@@ -56,6 +146,11 @@ class Zip
 	 * @var
 	 */
 	private $address;
+
+	/**
+	 * @var array
+	 */
+	private $errors = array();
 
 	/**
 	 * The class constructor.
@@ -73,13 +168,17 @@ class Zip
 	 * Zip setter & validate zip.
 	 *
 	 * @param $zip
-	 * @throws Exceptions\InvalidZip
+	 * @return bool
 	 */
 	public function setZip($zip)
 	{
+		$this->clearErrors();
+
 		if ( ! $this->validateZip($zip))
 		{
-			throw new InvalidZip("Zip code '$zip' is not valid.", 1);
+			$this->addError("Zip code '$zip' is not valid.");
+
+			return false;
 		}
 
 		$this->zip = $this->clearZip($zip);
@@ -95,7 +194,7 @@ class Zip
 	{
 		$zip = $this->clearZip($zip);
 
-		return is_numeric($zip) && strlen($zip) === 8;
+		return is_numeric($zip) && strlen($zip) === $this->getZipLength();
 	}
 
 	/**
@@ -112,6 +211,8 @@ class Zip
 				return true;
 			}
 		}
+
+		$this->addError('No zip providers are up.');
 
 		return false;
 	}
@@ -133,7 +234,7 @@ class Zip
 	 */
 	public function getProviders()
 	{
-		return $this->providers;
+		return $this->providers[$this->getCountry()]['providers'];
 	}
 
 	/**
@@ -154,18 +255,15 @@ class Zip
 	 */
 	public function findZip($zip)
 	{
-		$this->setZip($zip);
-
 		foreach($this->getProviders() as $provider)
 		{
-			if ($address = $this->searchZip($this->getZip(), $provider['url'], $provider['query']))
+			if ($address = $this->searchZipUsingProvider($zip, $provider))
 			{
-				if ($this->setAddress($address, $provider))
-				{
-					return $this->getAddress();
-				}
+				return $this->getAddress();
 			}
 		}
+
+		$this->addError('There are no providers available.');
 
 		return false;
 	}
@@ -176,13 +274,15 @@ class Zip
 	 * @param $zip
 	 * @param $url
 	 * @param $query
+	 * @param $resultType
+	 * @param $format
 	 * @return array|bool
 	 */
-	private function searchZip($zip, $url, $query)
+	private function searchZip($zip, $url, $query, $resultType, $format)
 	{
-		$url = $this->buildUrl($zip, $url, $query);
+		$url = $this->buildUrl($zip, $url, $query, $format);
 
-		if ($address = $this->http->consume($url))
+		if ($address = $this->http->consume($url, $resultType))
 		{
 			$address['zip'] = $zip;
 		}
@@ -238,11 +338,37 @@ class Zip
 		return $this->zip;
 	}
 
-	private function buildUrl($zip, $url, $query)
+	/**
+	 * Build a provider url.
+	 *
+	 * @param $zip
+	 * @param $url
+	 * @param $query
+	 * @param $format
+	 * @return string
+	 */
+	private function buildUrl($zip, $url, $query, $format)
 	{
-		return sprintf("$url?$query", $this->clearZip($zip));
+		return sprintf("$url$query", $this->formatZip($this->clearZip($zip), $format));
 	}
 
+	/**
+	 * Errors getter.
+	 *
+	 * @return mixed
+	 */
+	public function getErrors()
+	{
+		return $this->errors;
+	}
+
+	/**
+	 * Extract all fields address from a result.
+	 *
+	 * @param $address
+	 * @param $provider
+	 * @return array|bool
+	 */
 	private function extractAddressFields($address, $provider)
 	{
 		if ( ! $this->isValidAddress($address, $provider))
@@ -252,7 +378,7 @@ class Zip
 
 		$array = array();
 
-		foreach($this->addressFields as $field)
+		foreach(Address::$fields as $field)
 		{
 			if (isset($provider[$field]))
 			{
@@ -263,15 +389,25 @@ class Zip
 		return $array;
 	}
 
+	/**
+	 * Check if an address is valid.
+	 *
+	 * @param $address
+	 * @param $provider
+	 * @return bool
+	 */
 	private function isValidAddress($address, $provider)
 	{
 		$valid = true;
 
-		foreach($this->addressFields as $field)
+		foreach(Address::$fields as $field)
 		{
 			if (isset($provider[$field]))
 			{
-				$valid = $valid && isset($address[$provider[$field]]);
+				if ( ! $valid = $valid && isset($address[$provider[$field]]))
+				{
+					$this->addError("Address field '$field' was not found.");
+				}
 			}
 		}
 
@@ -283,12 +419,92 @@ class Zip
 				{
 					$field = substr($key, 7);
 
-					$valid = $valid && $address[$field] == $provider[$key];
+					if ( ! $valid = $valid && $address[$field] == $provider[$key])
+					{
+						$this->addError("Verification field $key should be '$provider[$key]' and is '$address[$field]'.");
+					};
 				}
 			}
 		}
 
+		if ( ! $valid)
+		{
+			$this->addError('Address is not valid.');
+		}
+
 		return $valid;
+	}
+
+	/**
+	 * Add an error to the list of errors.
+	 *
+	 * @param $error
+	 */
+	private function addError($error)
+	{
+		$this->errors[] = $error;
+	}
+
+	/**
+	 * Clear the errors array.
+	 *
+	 */
+	private function clearErrors()
+	{
+		$this->errors = array();
+	}
+
+	/**
+	 * A general search zip by provider method.
+	 *
+	 * @param $zip
+	 * @param $provider
+	 * @return bool|mixed
+	 */
+	public function searchZipUsingProvider($zip, $provider)
+	{
+		$this->setZip($zip);
+
+		if ($address = $this->searchZip($this->getZip(), $provider['url'], $provider['query'], $provider['result_type'], $provider['zip_format']))
+		{
+			if ($this->setAddress($address, $provider))
+			{
+				return $this->getAddress();
+			}
+		}
+
+		return false;
+	}
+
+	private function formatZip($zip, $format)
+	{
+		if ($format == '99999-999')
+		{
+			$zip = substr($zip, 0, 5).'-'.substr($zip, 5);
+		}
+
+		return $zip;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getCountry()
+	{
+		return $this->country;
+	}
+
+	/**
+	 * @param string $country
+	 */
+	public function setCountry($country)
+	{
+		$this->country = $country;
+	}
+
+	private function getZipLength()
+	{
+		return $this->providers[$this->getCountry()]['zip_length'];
 	}
 
 }

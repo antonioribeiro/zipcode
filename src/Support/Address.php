@@ -5,34 +5,20 @@ namespace PragmaRX\Zip\Support;
 class Address {
 
 	/**
-	 * @var
+	 * All available fields.
+	 *
+	 * @var array
 	 */
-	public $zip;
-
-	/**
-	 * @var
-	 */
-	public $state;
-
-	/**
-	 * @var
-	 */
-	public $city;
-
-	/**
-	 * @var
-	 */
-	public $neighborhood;
-
-	/**
-	 * @var
-	 */
-	public $street_kind;
-
-	/**
-	 * @var
-	 */
-	public $street_name;
+	public static $fields = array(
+		'zip',
+		'state',
+		'state_name',
+		'city',
+		'neighborhood',
+		'street_kind',
+		'street_name',
+		'code_in_country',
+	);
 
 	/**
 	 * @param null $address
@@ -56,12 +42,10 @@ class Address {
 			$address = $address->toArray();
 		}
 
-		$this->zip = $address['zip'];
-		$this->state = $address['state'];
-		$this->city = $address['city'];
-		$this->neighborhood = $address['neighborhood'];
-		$this->street_kind = $address['street_kind'];
-		$this->street_name = $address['street_name'];
+		foreach(static::$fields as $field)
+		{
+			$this->{$field} = isset($address[$field]) ? $address[$field] : null;
+		}
 
 		return $this;
 	}

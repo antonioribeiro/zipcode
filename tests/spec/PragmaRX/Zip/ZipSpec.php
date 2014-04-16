@@ -12,6 +12,8 @@ class ZipSpec extends ObjectBehavior
 		'url' => 'testprovider',
 		'query' => '',
 		'_check_resultado' => '1',
+		'result_type' => 'json',
+		'zip_format' => '99999999',
 		'zip' => 'zip',
 		'state' => 'uf',
 		'city' => 'cidade',
@@ -29,6 +31,8 @@ class ZipSpec extends ObjectBehavior
 		'tipo_logradouro' => 'Rua',
 		'logradouro' => 'Professor Quintino do Vale',
 	);
+
+	private $numberOfProvidersAvailable = 6;
 
 	public function let(Http $http)
 	{
@@ -61,14 +65,16 @@ class ZipSpec extends ObjectBehavior
 
     public function it_doesnt_accept_wrong_zips()
     {
-    	$this->shouldThrow('\PragmaRX\Zip\Exceptions\InvalidZip')->duringSetZip('1');
+    	$this->setZip('1')->shouldBe(false);
+
+	    $this->getErrors()->shouldBe(array("Zip code '1' is not valid."));
     }
 
     public function it_has_providers()
     {
     	$this->getProviders()->shouldBeArray();
 
-    	$this->getProviders()->shouldHaveCount(1);
+    	$this->getProviders()->shouldHaveCount($this->numberOfProvidersAvailable);
     }
 
     public function it_can_set_providers()
@@ -82,7 +88,7 @@ class ZipSpec extends ObjectBehavior
     {
     	$this->addProvider(array());
 
-    	$this->getProviders()->shouldHaveCount(count($this->getProviders()) + 1);
+    	$this->getProviders()->shouldHaveCount(count($this->getProviders()) + $this->numberOfProvidersAvailable);
     }
 
 	public function it_can_reach_zip_providers($http)
@@ -98,7 +104,7 @@ class ZipSpec extends ObjectBehavior
 	{
 		$this->setProviders($this->providerExample);
 
-		$http->consume("testprovider?")->willReturn($this->addressExample);
+		$http->consume("testprovider", "json")->willReturn($this->addressExample);
 
 		$this->findZip('20250030')->shouldHaveType('PragmaRX\Zip\Support\Address');
 	}
