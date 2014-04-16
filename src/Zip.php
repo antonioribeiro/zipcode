@@ -4,127 +4,18 @@ namespace PragmaRX\Zip;
 
 use PragmaRX\Zip\Support\Http;
 use PragmaRX\Zip\Support\Address;
+use PragmaRX\Zip\Exceptions\WebServicesNotFound;
 
 class Zip
 {
-	/**
-	 * List of zip providers.
-	 *
-	 * @var array
-	 */
-	private $providers = array(
-		'BR' => array(
-			'zip_length' => 8,
-			'providers' => array(
-				array(
-					'url' => 'http://viacep.com.br/',
-					'query' => 'ws/%s/json/',
-					'result_type' => 'json',
-					'zip_format' => '99999999',
-					'zip' => 'cep',
-					'state' => 'uf',
-					'city' => 'localidade',
-					'neighborhood' => 'bairro',
-					'street_kind' => null,
-					'street_name' => 'logradouro',
-					'code_in_country' => 'ibge',
-				),
-
-				array(
-					'url' => 'http://appservidor.com.br/webservice/cep',
-					'query' => '?CEP=%s',
-					'result_type' => 'json',
-					'zip_format' => '99999999',
-					'zip' => 'cep',
-					'state' => 'uf_sigla',
-					'state_name' => 'uf_nome',
-					'city' => 'cidade',
-					'neighborhood' => 'bairro',
-					'street_kind' => 'logradouro',
-					'street_name' => 'logradouro_nome',
-				),
-
-				array(
-					'url' => 'http://republicavirtual.com.br/web_cep.php',
-					'query' => '?cep=%s&formato=json',
-					'result_type' => 'json',
-					'zip_format' => '99999999',
-					'_check_resultado' => '1',
-					'zip' => 'zip',
-					'state' => 'uf',
-					'city' => 'cidade',
-					'neighborhood' => 'bairro',
-					'street_kind' => 'tipo_logradouro',
-					'street_name' => 'logradouro',
-				),
-
-				array(
-					'url' => 'http://cep.correiocontrol.com.br',
-					'query' => '/%s.json',
-					'result_type' => 'json',
-					'zip_format' => '99999999',
-					'zip' => 'cep',
-					'state' => 'uf',
-					'city' => 'localidade',
-					'neighborhood' => 'bairro',
-					'street_kind' => null,
-					'street_name' => 'logradouro',
-				),
-
-				array(
-					'url' => 'http://cep.correiocontrol.com.br',
-					'query' => '/%s.json',
-					'result_type' => 'json',
-					'zip_format' => '99999999',
-					'zip' => 'cep',
-					'state' => 'uf',
-					'city' => 'localidade',
-					'neighborhood' => 'bairro',
-					'street_kind' => null,
-					'street_name' => 'logradouro',
-				),
-
-				array(
-					'url' => 'http://clareslab.com.br',
-					'query' => '/ws/cep/json/%s/',
-					'result_type' => 'json',
-					'zip_format' => '99999-999',
-					'zip' => 'cep',
-					'state' => 'uf',
-					'city' => 'cidade',
-					'neighborhood' => 'bairro',
-					'street_kind' => null,
-					'street_name' => 'endereco',
-				),
-			),
-		),
-
-		'US' => array(
-			'zip_length' => 5,
-			'providers' => array(
-				array(
-					'country_code' => 'US',
-					'url' => 'http://zip.elevenbasetwo.com',
-					'query' => '/v2/US/%s',
-					'result_type' => 'json',
-					'zip_format' => '99999',
-					'zip' => 'zip',
-					'state' => 'state',
-					'city' => 'city',
-					'country' => 'country',
-					'street_kind' => null,
-					'street_name' => null,
-				),
-			),
-		),
-	);
-
 	/**
 	 * The HTTP class.
 	 *
 	 * @var Support\Http
 	 */
 	private $http;
+
+	private $webServices;
 
 	/**
 	 * Current country.
@@ -139,6 +30,8 @@ class Zip
 	 * @var
 	 */
 	private $zip;
+
+	private $preferredWebService;
 
 	/**
 	 * The current address found.
@@ -162,6 +55,8 @@ class Zip
 		$this->http = $http;
 
 		$this->address = new Address();
+
+		$this->setCountry($this->country);
 	}
 
 	/**
@@ -198,53 +93,90 @@ class Zip
 	}
 
 	/**
-	 * Check if at least one provider is up.
+	 * Check if at least one web service is up.
 	 *
 	 * @return bool
 	 */
-	public function checkZipProviders()
+	public function checkZipWebServices()
 	{
-		foreach($this->getProviders() as $provider)
+		foreach($this->getWebServices() as $webService)
 		{
-			if ($this->http->ping($provider['url']))
+			if ($this->http->ping($webService['url']))
 			{
 				return true;
 			}
 		}
 
-		$this->addError('No zip providers are up.');
+		$this->addError('No zip webServices are up.');
 
 		return false;
 	}
 
 	/**
-	 * Providers setter.
+	 * WebServices setter.
 	 *
-	 * @param $providers
+	 * @param $webServices
 	 */
-	public function setProviders($providers)
+	public function setWebServices($webServices)
 	{
-		$this->providers = $providers;
+		$this->webServices = $webServices;
 	}
 
 	/**
-	 * Providers getter.
+	 * WebServices getter.
 	 *
 	 * @return array
 	 */
-	public function getProviders()
+	public function getWebServices()
 	{
-		return $this->providers[$this->getCountry()]['providers'];
+		$webservices = $this->webServices['web_services'];
+
+		if ($this->preferredWebService)
+		{
+			if ($key = $this->searchWebServiceByName($this->preferredWebService))
+			{
+				$service = $webservices[$key];
+
+			    unset($webservices[$key]);
+
+			    array_insert($webservices, $service, 0);
+			}
+		}
+
+		return $webservices;
+	}
+
+	private function searchWebServiceByName($name)
+	{
+		foreach($this->webServices['web_services'] as $key => $service)
+		{
+			if ($service['name'] == $name)
+			{
+				return $key;
+			}
+		}
+
+		return false;
+	}
+
+	public function getWebServicesByName($name)
+	{
+		if ($key = $this->searchWebServiceByName($name))
+		{
+			return $this->webServices['web_services'][$key];
+		}
+
+		return false;
 	}
 
 	/**
-	 * Add a provider to the list of providers.
+	 * Add a web service to the list of webServices.
 	 *
-	 * @param $provider
+	 * @param $webService
 	 */
-	public function addProvider($provider)
+	public function addWebService($webService)
 	{
-		$this->providers[] = $provider;
+		$this->webServices['web_services'][] = $webService;
 	}
 
 	/**
@@ -255,15 +187,15 @@ class Zip
 	 */
 	public function findZip($zip)
 	{
-		foreach($this->getProviders() as $provider)
+		foreach($this->getWebServices() as $webService)
 		{
-			if ($address = $this->searchZipUsingProvider($zip, $provider))
+			if ($address = $this->searchZipUsingWebService($zip, $webService))
 			{
 				return $this->getAddress();
 			}
 		}
 
-		$this->addError('There are no providers available.');
+		$this->addError('There are no webServices available.');
 
 		return false;
 	}
@@ -278,13 +210,21 @@ class Zip
 	 * @param $format
 	 * @return array|bool
 	 */
-	private function searchZip($zip, $url, $query, $resultType, $format)
+	public function gatherInformationFromZip($zip, $webService)
 	{
-		$url = $this->buildUrl($zip, $url, $query, $format);
+		$url = $this->buildUrl($zip, $webService['url'], $webService['query'], $webService['zip_format']);
 
-		if ($address = $this->http->consume($url, $resultType))
+		if ($address = $this->http->consume($url, $webService['result_type']))
 		{
-			$address['zip'] = $zip;
+			$address['zip'] = ! isset($address['zip']) || empty($address['zip']) 
+								? $zip 
+								: $address['zip'];
+
+			$address['country_id'] = ! isset($address['country_id']) || empty($address['country_id']) 
+									? $this->getCountry() 
+									: $address['country_id'];
+
+			$address['web_service'] = $webService['name'];
 		}
 
 		return $address;
@@ -315,12 +255,12 @@ class Zip
 	 * Address setter.
 	 *
 	 * @param mixed $address
-	 * @param $provider
+	 * @param $webService
 	 * @return mixed
 	 */
-	public function setAddress($address, $provider)
+	public function setAddress($address, $webService)
 	{
-		if ( ! $address = $this->extractAddressFields($address, $provider))
+		if ( ! $address = $this->extractAddressFields($address, $webService))
 		{
 			return false;
 		}
@@ -339,7 +279,7 @@ class Zip
 	}
 
 	/**
-	 * Build a provider url.
+	 * Build a web service url.
 	 *
 	 * @param $zip
 	 * @param $url
@@ -366,12 +306,12 @@ class Zip
 	 * Extract all fields address from a result.
 	 *
 	 * @param $address
-	 * @param $provider
+	 * @param $webService
 	 * @return array|bool
 	 */
-	private function extractAddressFields($address, $provider)
+	private function extractAddressFields($address, $webService)
 	{
-		if ( ! $this->isValidAddress($address, $provider))
+		if ( ! $this->isValidAddress($address, $webService))
 		{
 			return false;
 		}
@@ -380,9 +320,18 @@ class Zip
 
 		foreach(Address::$fields as $field)
 		{
-			if (isset($provider[$field]))
+			if (isset($webService[$field]) || isset($address[$field]))
 			{
-				$array[$field] = $address[$provider[$field]];
+				if (isset($webService[$field]))
+				{
+					$value = array_get($address, $webService[$field]);
+				}
+				else
+				{
+					$value = $address[$field];
+				}
+
+				$array[$field] = $value;
 			}
 		}
 
@@ -393,18 +342,18 @@ class Zip
 	 * Check if an address is valid.
 	 *
 	 * @param $address
-	 * @param $provider
+	 * @param $webService
 	 * @return bool
 	 */
-	private function isValidAddress($address, $provider)
+	private function isValidAddress($address, $webService)
 	{
 		$valid = true;
 
 		foreach(Address::$fields as $field)
 		{
-			if (isset($provider[$field]))
+			if (isset($webService[$field]))
 			{
-				if ( ! $valid = $valid && isset($address[$provider[$field]]))
+				if ( ! $valid = $valid && array_get($address, $webService[$field]))
 				{
 					$this->addError("Address field '$field' was not found.");
 				}
@@ -413,15 +362,15 @@ class Zip
 
 		if ($valid)
 		{
-			foreach($provider as $key => $field)
+			foreach($webService as $key => $field)
 			{
 				if (substr($key, 0, 7) == '_check_')
 				{
 					$field = substr($key, 7);
 
-					if ( ! $valid = $valid && $address[$field] == $provider[$key])
+					if ( ! $valid = $valid && $address[$field] == $webService[$key])
 					{
-						$this->addError("Verification field $key should be '$provider[$key]' and is '$address[$field]'.");
+						$this->addError("Verification field $key should be '$webService[$key]' and is '$address[$field]'.");
 					};
 				}
 			}
@@ -455,19 +404,19 @@ class Zip
 	}
 
 	/**
-	 * A general search zip by provider method.
+	 * A general search zip by web service method.
 	 *
 	 * @param $zip
-	 * @param $provider
+	 * @param $webService
 	 * @return bool|mixed
 	 */
-	public function searchZipUsingProvider($zip, $provider)
+	public function searchZipUsingWebService($zip, $webService)
 	{
 		$this->setZip($zip);
 
-		if ($address = $this->searchZip($this->getZip(), $provider['url'], $provider['query'], $provider['result_type'], $provider['zip_format']))
+		if ($address = $this->gatherInformationFromZip($this->getZip(), $webService))
 		{
-			if ($this->setAddress($address, $provider))
+			if ($this->setAddress($address, $webService))
 			{
 				return $this->getAddress();
 			}
@@ -476,14 +425,9 @@ class Zip
 		return false;
 	}
 
-	private function formatZip($zip, $format)
+	public function formatZip($zip, $format)
 	{
-		if ($format == '99999-999')
-		{
-			$zip = substr($zip, 0, 5).'-'.substr($zip, 5);
-		}
-
-		return $zip;
+		return format_masked($this->clearZip($zip), $format);
 	}
 
 	/**
@@ -500,11 +444,41 @@ class Zip
 	public function setCountry($country)
 	{
 		$this->country = $country;
+
+		$this->loadWebServices($country);
 	}
 
 	private function getZipLength()
 	{
-		return $this->providers[$this->getCountry()]['zip_length'];
+		return $this->webServices['zip_length'];
 	}
 
+	private function loadWebServices($country)
+	{
+		$file = __DIR__."/Support/WebServices/Countries/$country.php";
+
+		if ( ! file_exists($file))
+		{
+			throw new WebServicesNotFound("There are no web services for this country '$country'.", 1);
+		}
+
+		try
+		{
+			$this->setWebServices(require($file));
+		}
+		catch(\Exception $e)
+		{
+			throw new WebServicesNotFound("Error loading web services for country country '$country': ".$e->getMessage(), 1);
+		}
+	}
+
+	public function clearWebServicesList()
+	{
+		$this->webServices['web_services'] = array();
+	}
+
+	public function setPreferredWebService($service)
+	{
+		$this->preferredWebService = $service;
+	}
 }

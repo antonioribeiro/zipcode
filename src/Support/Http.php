@@ -31,7 +31,7 @@ class Http {
 
 		$client = new \GuzzleHttp\Client(array(
 		    'defaults' => array(
-			    'headers'         => array('User-Agent' => $this->getUserAgent())
+			    'headers' => array('User-Agent' => $this->getUserAgent())
 			)
 		));
 

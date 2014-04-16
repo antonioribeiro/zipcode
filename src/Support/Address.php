@@ -10,14 +10,21 @@ class Address {
 	 * @var array
 	 */
 	public static $fields = array(
+		'web_service',
 		'zip',
-		'state',
+		'state_id',
 		'state_name',
 		'city',
 		'neighborhood',
 		'street_kind',
 		'street_name',
 		'code_in_country',
+		'country_id',
+		'country_name',
+		'area_code',
+		'time_zone',
+		'longitude',
+		'latitude',
 	);
 
 	/**
