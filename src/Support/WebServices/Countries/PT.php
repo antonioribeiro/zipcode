@@ -1,7 +1,5 @@
 <?php
 
-$id = 0;
-
 return array(
 
 	'zip_length' => 7,
