@@ -16,6 +16,7 @@ class ZipSpec extends ObjectBehavior
 
 		'web_services' => array(
 			array(
+				'name' => 'testwebService',
 				'url' => 'testwebService',
 				'query' => '',
 				'result_type' => 'json',
@@ -34,6 +35,7 @@ class ZipSpec extends ObjectBehavior
 	);
 
 	private $wrongWebServiceExample = array(
+		'name' => 'testwebService',
 		'url' => 'testwebService',
 		'query' => '',
 		'result_type' => 'json',
@@ -183,11 +185,11 @@ class ZipSpec extends ObjectBehavior
 
 		$this->addWebService($this->wrongWebServiceExample);
 
-		$http->consume("testwebService", "json")->willReturn($this->addressExample);
+		$http->consume("testwebService", "json")->willReturn(array()); // returns an empty address
 
 		$this->findZip('20250030');
 
-		$this->getErrors()->shouldHaveCount(1);
+		$this->getErrors()->shouldHaveCount(1); /// address is invalid error message
 	}
 
 	public function it_formats_zip_correctly()
