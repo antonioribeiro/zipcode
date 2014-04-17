@@ -1,6 +1,6 @@
 {
     "require": {
-        "pragmarx/support": "dev-master#40c2d851e44a3c52da7b62f59941a111d9b12a33",
+        "pragmarx/support": "0.2.*@dev",
         "guzzlehttp/guzzle": "~4.0"
     },
 

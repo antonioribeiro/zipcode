@@ -3,20 +3,20 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "fb5f9e9e16e40447ec2ef83f790c6254",
+    "hash": "c95c21c4fa7908cc31d15731e9478930",
     "packages": [
         {
             "name": "guzzlehttp/guzzle",
-            "version": "4.0.1",
+            "version": "4.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/guzzle/guzzle.git",
-                "reference": "c1cf6c8630b71fa7c9b8f7e769758bb1d9147dae"
+                "reference": "40db53833aaea528347994acd4578d7b9b2211ee"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/guzzle/guzzle/zipball/c1cf6c8630b71fa7c9b8f7e769758bb1d9147dae",
-                "reference": "c1cf6c8630b71fa7c9b8f7e769758bb1d9147dae",
+                "url": "https://api.github.com/repos/guzzle/guzzle/zipball/40db53833aaea528347994acd4578d7b9b2211ee",
+                "reference": "40db53833aaea528347994acd4578d7b9b2211ee",
                 "shasum": ""
             },
             "require": {
@@ -64,7 +64,7 @@
                 "rest",
                 "web service"
             ],
-            "time": "2014-04-04 20:43:50"
+            "time": "2014-04-16 17:33:22"
         },
         {
             "name": "guzzlehttp/streams",
@@ -125,12 +125,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/antonioribeiro/support.git",
-                "reference": "40c2d851e44a3c52da7b62f59941a111d9b12a33"
+                "reference": "f9d1b8bf05b49699ba6e0f429ff686c580063463"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/antonioribeiro/support/zipball/40c2d851e44a3c52da7b62f59941a111d9b12a33",
-                "reference": "40c2d851e44a3c52da7b62f59941a111d9b12a33",
+                "url": "https://api.github.com/repos/antonioribeiro/support/zipball/f9d1b8bf05b49699ba6e0f429ff686c580063463",
+                "reference": "f9d1b8bf05b49699ba6e0f429ff686c580063463",
                 "shasum": ""
             },
             "require": {
@@ -165,7 +165,7 @@
                 {
                     "name": "Antonio Carlos Ribeiro",
                     "email": "acr@antoniocarlosribeiro.com",
-                    "role": "Creator & Designer"
+                    "role": "Creator"
                 }
             ],
             "description": "PragmaRX components support package",
@@ -173,7 +173,7 @@
                 "laravel",
                 "pragmarx"
             ],
-            "time": "2014-04-16 14:36:29"
+            "time": "2014-04-17 14:39:17"
         }
     ],
     "packages-dev": [
