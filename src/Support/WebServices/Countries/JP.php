@@ -1,15 +1,15 @@
 <?php
 
-return array(
+return [
 
 	'zip_length' => 5,
 
-	'web_services' => array(
-		array(
+	'web_services' => [
+
+		[
 			'name' => 'zippopotam',
 			'url' => 'http://api.zippopotam.us',
 			'query' => '/JP/%s',
-			'result_type' => 'json',
 			'zip_format' => '99999',
 			'zip' => 'post code',
 			'state_id' => 'places.0.state abbreviation',
@@ -19,7 +19,8 @@ return array(
 			'country_name' => 'country',
 			'longitude' => 'places.0.longitude',
 			'latitude' => 'places.0.latitude',
-		),
+		],
 
-	),
-);
+	],
+
+];

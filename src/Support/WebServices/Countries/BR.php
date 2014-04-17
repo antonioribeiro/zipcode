@@ -1,15 +1,15 @@
 <?php
 
-return array(
+return [
 
 	'zip_length' => 8,
 
-	'web_services' => array(
-		array(
+	'web_services' => [
+
+		[
 			'name' => 'viacep',
 			'url' => 'http://viacep.com.br/',
 			'query' => 'ws/%s/json/',
-			'result_type' => 'json',
 			'zip_format' => '99999999',
 			'zip' => 'cep',
 			'state_id' => 'uf',
@@ -19,13 +19,12 @@ return array(
 			'street_kind' => null,
 			'street_name' => 'logradouro',
 			'code_in_country' => 'ibge',
-		),
+		],
 
-		array(
+		[
 			'name' => 'appservidor',
 			'url' => 'http://appservidor.com.br/webservice/cep',
 			'query' => '?CEP=%s',
-			'result_type' => 'json',
 			'zip_format' => '99999999',
 			'zip' => 'cep',
 			'state_id' => 'uf_sigla',
@@ -34,13 +33,12 @@ return array(
 			'neighborhood' => 'bairro',
 			'street_kind' => 'logradouro',
 			'street_name' => 'logradouro_nome',
-		),
+		],
 
-		array(
+		[
 			'name' => 'republicavirtual',
 			'url' => 'http://republicavirtual.com.br/web_cep.php',
 			'query' => '?cep=%s&formato=json',
-			'result_type' => 'json',
 			'zip_format' => '99999999',
 			'_check_resultado' => '1',
 			'zip' => 'zip',
@@ -50,13 +48,12 @@ return array(
 			'neighborhood' => 'bairro',
 			'street_kind' => 'tipo_logradouro',
 			'street_name' => 'logradouro',
-		),
+		],
 
-		array(
+		[
 			'name' => 'correiocontrol',
 			'url' => 'http://cep.correiocontrol.com.br',
 			'query' => '/%s.json',
-			'result_type' => 'json',
 			'zip_format' => '99999999',
 			'zip' => 'cep',
 			'state_id' => 'uf',
@@ -65,13 +62,12 @@ return array(
 			'neighborhood' => 'bairro',
 			'street_kind' => null,
 			'street_name' => 'logradouro',
-		),
+		],
 
-		array(
+		[
 			'name' => 'clareslab',
 			'url' => 'http://clareslab.com.br',
 			'query' => '/ws/cep/json/%s/',
-			'result_type' => 'json',
 			'zip_format' => '99999-999',
 			'zip' => 'cep',
 			'state_id' => 'uf',
@@ -80,6 +76,8 @@ return array(
 			'neighborhood' => 'bairro',
 			'street_kind' => null,
 			'street_name' => 'endereco',
-		),
-	),
-);
+		],
+
+	],
+
+];
