@@ -6,20 +6,23 @@ return [
 
 	'web_services' => [
 
+		/**
+		 * geocoder.ca - http://geocoder.ca/?api=1
+		 *
+		 * The limits on the free XML port are dynamically assigned.
+		 * If our server load goes up, the limit becomes more restrictive and vice versa.
+		 * Normally it will be in the range of 500-2000 lookups per day.
+		 */
 		[
 			'name' => 'geocoder',
 			'url' => 'http://geocoder.ca',
 			'query' => '/?postal=%s&geoit=XML',
-			'result_type' => 'json',
 			'zip_format' => '999999',
-			'zip' => 'geodata.post code',
-			'state_id' => 'places.0.state abbreviation',
-			'state_name' => 'places.0.state',
-			'city' => 'places.0.place name',
-			'country_id' => 'country abbreviation',
-			'country_name' => 'country',
-			'longitude' => 'places.0.longitude',
-			'latitude' => 'places.0.latitude',
+			'zip' => 'postal',
+			'state_id' => 'standard.prov',
+			'city' => 'standard.city',
+			'longitude' => 'latt',
+			'latitude' => 'longt',
 		],
 
 	],
