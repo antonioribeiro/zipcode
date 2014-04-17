@@ -9,7 +9,7 @@ class Address {
 	 *
 	 * @var array
 	 */
-	public static $fields = array(
+	public static $fields = [
 		'web_service',
 		'zip',
 		'state_id',
@@ -25,7 +25,7 @@ class Address {
 		'time_zone',
 		'longitude',
 		'latitude',
-	);
+	];
 
 	/**
 	 * @param null $address
@@ -62,14 +62,7 @@ class Address {
 	 */
 	public function toArray()
 	{
-		return array(
-			'zip' => $this->zip,
-			'state' => $this->state,
-			'city' => $this->city,
-			'neighborhood' => $this->neighborhood,
-			'street_kind' => $this->street_kind,
-			'street_name' => $this->street_name,
-		);
+		return (array) $this;
 	}
 
 	/**
