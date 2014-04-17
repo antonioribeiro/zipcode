@@ -5,7 +5,7 @@ namespace PragmaRX\Zip;
 use PragmaRX\Zip\Exceptions\InvalidZip;
 use PragmaRX\Zip\Exceptions\WebServicesNotFound;
 use PragmaRX\Zip\Support\Http;
-use PragmaRX\Zip\Support\Address;
+use PragmaRX\Zip\Support\Result;
 
 class Zip
 {
@@ -67,7 +67,7 @@ class Zip
 	{
 		$this->http = $http;
 
-		$this->address = new Address();
+		$this->address = new Result();
 
 		$this->setCountry($this->country);
 	}
@@ -211,7 +211,7 @@ class Zip
 		{
 			if ($address = $this->searchZipUsingWebService($zip, $webService))
 			{
-				return $this->getAddress();
+				return $this->getResult();
 			}
 		}
 
@@ -236,7 +236,7 @@ class Zip
 
 		if ($address = $this->http->consume($url))
 		{
-			$address['zip'] = ! isset($address['zip']) || empty($address['zip']) 
+			$address['zip'] = ! isset($address['zip']) || empty($address['zip'])
 								? $zip 
 								: $address['zip'];
 
@@ -262,30 +262,30 @@ class Zip
 	}
 
 	/**
-	 * Address getter.
+	 * Result getter.
 	 *
 	 * @return mixed
 	 */
-	public function getAddress()
+	public function getResult()
 	{
 		return $this->address;
 	}
 
 	/**
-	 * Address setter.
+	 * Result setter.
 	 *
 	 * @param mixed $address
 	 * @param $webService
 	 * @return mixed
 	 */
-	public function setAddress($address, $webService)
+	public function setResult($address, $webService)
 	{
-		if ( ! $address = $this->extractAddressFields($address, $webService))
+		if ( ! $address = $this->extractResultFields($address, $webService))
 		{
 			return false;
 		}
 
-		return $this->address->parse($address);
+		return $this->address->parse($address, $webService['fields']);
 	}
 
 	/**
@@ -329,30 +329,20 @@ class Zip
 	 * @param $webService
 	 * @return array|bool
 	 */
-	private function extractAddressFields($address, $webService)
+	private function extractResultFields($address, $webService)
 	{
-		if ( ! $this->isValidAddress($address, $webService))
+		if ( ! $this->isValidResult($address, $webService))
 		{
 			return false;
 		}
 
 		$array = [];
 
-		foreach(Address::$fields as $field)
+		foreach($webService['fields'] as $field => $originalName)
 		{
-			if (isset($webService[$field]) || isset($address[$field]))
-			{
-				if (isset($webService[$field]))
-				{
-					$value = array_get($address, $webService[$field]);
-				}
-				else
-				{
-					$value = $address[$field];
-				}
+			$value = array_get($address, $originalName);
 
-				$array[$field] = $value;
-			}
+			$array[$field] = $value;
 		}
 
 		return $array;
@@ -365,17 +355,20 @@ class Zip
 	 * @param $webService
 	 * @return bool
 	 */
-	private function isValidAddress($address, $webService)
+	private function isValidResult($address, $webService)
 	{
 		$valid = true;
 
-		foreach(Address::$fields as $field)
+		foreach($webService['fields'] as $field => $originalName)
 		{
 			if (isset($webService[$field]))
 			{
-				if ( ! $valid = $valid && array_get($address, $webService[$field]))
+				$has = array_get($address, $originalName);
+				$valid = $valid && $has;
+
+				if ( ! $has)
 				{
-					$this->addError("Address field '$field' was not found.");
+					$this->addError("Result field '$field' was not found.");
 				}
 			}
 		}
@@ -398,7 +391,7 @@ class Zip
 
 		if ( ! $valid)
 		{
-			$this->addError('Address is not valid.');
+			$this->addError('Result is not valid.');
 		}
 
 		return $valid;
@@ -436,9 +429,9 @@ class Zip
 
 		if ($address = $this->gatherInformationFromZip($this->getZip(), $webService))
 		{
-			if ($this->setAddress($address, $webService))
+			if ($this->setResult($address, $webService))
 			{
-				return $this->getAddress();
+				return $this->getResult();
 			}
 		}
 

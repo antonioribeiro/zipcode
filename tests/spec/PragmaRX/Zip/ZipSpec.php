@@ -17,18 +17,26 @@ class ZipSpec extends ObjectBehavior
 		'web_services' => [
 			[
 				'name' => 'testwebService',
+
 				'url' => 'testwebService',
+
 				'query' => '',
+
 				'result_type' => 'json',
+
 				'zip_format' => '99999999',
+
 				'_check_resultado' => '1',
-				'zip' => 'zip',
-				'state_id' => 'uf',
-				'state_name' => null,
-				'city' => 'cidade',
-				'neighborhood' => 'bairro',
-				'street_kind' => 'tipo_logradouro',
-				'street_name' => 'logradouro',
+
+				'fields' => [
+					'zip' => 'zip',
+					'state_id' => 'uf',
+					'state_name' => null,
+					'city' => 'cidade',
+					'neighborhood' => 'bairro',
+					'street_kind' => 'tipo_logradouro',
+					'street_name' => 'logradouro',
+				],
 			],
 		],
 
@@ -43,7 +51,7 @@ class ZipSpec extends ObjectBehavior
 		'_check_resultado' => '1',
 	];
 
-	private $addressExample = [
+	private $resultExample = [
 		'resultado' => '1',
 		'zip' => '20250030',
 		'uf' => 'RJ',
@@ -51,6 +59,8 @@ class ZipSpec extends ObjectBehavior
 		'bairro' => 'Estácio',
 		'tipo_logradouro' => 'Rua',
 		'logradouro' => 'Professor Quintino do Vale',
+		'country_id' => 'BR',
+		'web_service' => 'testwebService',
 	];
 
 	public function let(Http $http)
@@ -120,9 +130,9 @@ class ZipSpec extends ObjectBehavior
 	{
 		$this->setWebServices($this->webServicesExample);
 
-		$http->consume("testwebService")->willReturn($this->addressExample);
+		$http->consume("testwebService")->willReturn($this->resultExample);
 
-		$this->findZip('20250030')->shouldHaveType('PragmaRX\Zip\Support\Address');
+		$this->findZip('20250030')->shouldHaveType('PragmaRX\Zip\Support\Result');
 	}
 
 	public function it_can_change_a_country_and_load_webservices()
@@ -137,9 +147,9 @@ class ZipSpec extends ObjectBehavior
 		$this->shouldThrow('PragmaRX\Zip\Exceptions\WebServicesNotFound')->duringSetCountry('ZZ');
 	}
 
-	public function it_correctly_get_an_addresses()
+	public function it_correctly_get_an_results()
 	{
-		$this->getAddress()->shouldHaveType('PragmaRX\Zip\Support\Address');
+		$this->getResult()->shouldHaveType('PragmaRX\Zip\Support\Result');
 	}
 
 	public function it_gets_a_null_zip_after_instantiation()
@@ -151,7 +161,7 @@ class ZipSpec extends ObjectBehavior
 	{
 		$this->setWebServices($this->webServicesExample);
 
-		$http->consume("testwebService")->willReturn($this->addressExample);
+		$http->consume("testwebService")->willReturn($this->resultExample);
 
 		$this->findZip('20250030');
 
@@ -162,7 +172,7 @@ class ZipSpec extends ObjectBehavior
 	{
 		$this->setWebServices($this->webServicesExample);
 
-		$http->consume("testwebService")->willReturn($this->addressExample);
+		$http->consume("testwebService")->willReturn($this->resultExample);
 
 		$this->findZip('20250030');
 
@@ -182,11 +192,11 @@ class ZipSpec extends ObjectBehavior
 
 		$this->addWebService($this->wrongWebServiceExample);
 
-		$http->consume("testwebService")->willReturn([]); // returns an empty address
+		$http->consume("testwebService")->willReturn([]); // returns an empty result
 
 		$this->findZip('20250030');
 
-		$this->getErrors()->shouldHaveCount(1); /// address is invalid error message
+		$this->getErrors()->shouldHaveCount(1); /// result is invalid error message
 	}
 
 	public function it_formats_zip_correctly()
@@ -216,5 +226,40 @@ class ZipSpec extends ObjectBehavior
 		$this->getWebServiceByName('testwebService')->shouldBe($this->webServicesExample['web_services'][0]);
 	}
 
-}
+	public function it_can_set_a_zip()
+	{
+		$this->setZip('20.123-456');
 
+		$this->getZip()->shouldReturn('20123456');
+	}
+
+	public function it_can_gather_information_from_zip($http)
+	{
+		$this->setWebServices($this->webServicesExample);
+
+		$webService = $this->getWebServiceByName('testwebService');
+
+		$http->consume("testwebService")->willReturn($this->resultExample); // returns an empty result
+
+		$this->gatherInformationFromZip('20250-030', $webService)->shouldBe($this->resultExample);
+	}
+
+	public function it_can_set_a_country()
+	{
+		$this->setCountry('CA');
+
+		$this->getCountry()->shouldBe('CA');
+	}
+
+	public function it_can_set_a_user_agent($http)
+	{
+		$http->setUserAgent("CA")->willReturn(null);
+
+		$http->getUserAgent()->willReturn('CA');
+
+		$this->setUserAgent('CA');
+
+		$this->getUserAgent()->shouldBe('CA');
+	}
+
+}

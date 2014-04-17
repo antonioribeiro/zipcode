@@ -15,14 +15,21 @@ return [
 		 */
 		[
 			'name' => 'geocoder',
+
 			'url' => 'http://geocoder.ca',
+
 			'query' => '/?postal=%s&geoit=XML',
+
 			'zip_format' => '999999',
+
 			'zip' => 'postal',
-			'state_id' => 'standard.prov',
-			'city' => 'standard.city',
-			'longitude' => 'latt',
-			'latitude' => 'longt',
+
+			'fields' => [
+				'state_id' => 'standard.prov',
+				'city' => 'standard.city',
+				'longitude' => 'latt',
+				'latitude' => 'longt',
+			],
 		],
 
 	],
