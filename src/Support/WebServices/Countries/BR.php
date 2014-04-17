@@ -7,6 +7,24 @@ return [
 	'web_services' => [
 
 		[
+			'name' => 'republicavirtual',
+			'url' => 'http://republicavirtual.com.br/web_cep.php',
+			'query' => '?cep=%s&formato=json',
+			'result_type' => 'json',
+			'zip_format' => '99999999',
+			'_check_resultado' => '1',
+			'fields' => [
+				'zip' => 'zip',
+				'state_id' => 'uf',
+				'state_name' => null,
+				'city' => 'cidade',
+				'neighborhood' => 'bairro',
+				'street_kind' => 'tipo_logradouro',
+				'street_name' => 'logradouro',
+			],
+		],
+
+		[
 			'name' => 'viacep',
 			'url' => 'http://viacep.com.br/',
 			'query' => 'ws/%s/json/',
@@ -38,24 +56,6 @@ return [
 				'neighborhood' => 'bairro',
 				'street_kind' => 'logradouro',
 				'street_name' => 'logradouro_nome',
-			],
-		],
-
-		[
-			'name' => 'republicavirtual',
-			'url' => 'http://republicavirtual.com.br/web_cep.php',
-			'query' => '?cep=%s&formato=json',
-			'result_type' => 'json',
-			'zip_format' => '99999999',
-			'_check_resultado' => '1',
-			'fields' => [
-				'zip' => 'zip',
-				'state_id' => 'uf',
-				'state_name' => null,
-				'city' => 'cidade',
-				'neighborhood' => 'bairro',
-				'street_kind' => 'tipo_logradouro',
-				'street_name' => 'logradouro',
 			],
 		],
 
