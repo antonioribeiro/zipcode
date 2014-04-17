@@ -45,11 +45,11 @@ class Zip
 	private $preferredWebService;
 
 	/**
-	 * The current address found.
+	 * The current result found.
 	 *
 	 * @var
 	 */
-	private $address;
+	private $result;
 
 	/**
 	 * The list of errors.
@@ -67,7 +67,7 @@ class Zip
 	{
 		$this->http = $http;
 
-		$this->address = new Result();
+		$this->result = new Result();
 
 		$this->setCountry($this->country);
 	}
@@ -200,7 +200,7 @@ class Zip
 	}
 
 	/**
-	 * Find an address by zip.
+	 * Find an result by zip.
 	 *
 	 * @param $zip
 	 * @return bool|void
@@ -209,7 +209,7 @@ class Zip
 	{
 		foreach($this->getWebServices() as $webService)
 		{
-			if ($address = $this->searchZipUsingWebService($zip, $webService))
+			if ($result = $this->searchZipUsingWebService($zip, $webService))
 			{
 				return $this->getResult();
 			}
@@ -234,20 +234,20 @@ class Zip
 	{
 		$url = $this->buildUrl($zip, $webService['url'], $webService['query'], $webService['zip_format']);
 
-		if ($address = $this->http->consume($url))
+		if ($result = $this->http->consume($url))
 		{
-			$address['zip'] = ! isset($address['zip']) || empty($address['zip'])
+			$result['zip'] = ! isset($result['zip']) || empty($result['zip'])
 								? $zip 
-								: $address['zip'];
+								: $result['zip'];
 
-			$address['country_id'] = ! isset($address['country_id']) || empty($address['country_id']) 
+			$result['country_id'] = ! isset($result['country_id']) || empty($result['country_id'])
 									? $this->getCountry() 
-									: $address['country_id'];
+									: $result['country_id'];
 
-			$address['web_service'] = $webService['name'];
+			$result['web_service'] = $webService['name'];
 		}
 
-		return $address;
+		return $result;
 	}
 
 	/**
@@ -268,24 +268,24 @@ class Zip
 	 */
 	public function getResult()
 	{
-		return $this->address;
+		return $this->result;
 	}
 
 	/**
 	 * Result setter.
 	 *
-	 * @param mixed $address
+	 * @param mixed $result
 	 * @param $webService
 	 * @return mixed
 	 */
-	public function setResult($address, $webService)
+	public function setResult($result, $webService)
 	{
-		if ( ! $address = $this->extractResultFields($address, $webService))
+		if ( ! $result = $this->extractResultFields($result, $webService))
 		{
 			return false;
 		}
 
-		return $this->address->parse($address, $webService['fields']);
+		return $this->result->parse($result, $webService['fields']);
 	}
 
 	/**
@@ -323,15 +323,15 @@ class Zip
 	}
 
 	/**
-	 * Extract all fields address from a result.
+	 * Extract all fields result from a result.
 	 *
-	 * @param $address
+	 * @param $result
 	 * @param $webService
 	 * @return array|bool
 	 */
-	private function extractResultFields($address, $webService)
+	private function extractResultFields($result, $webService)
 	{
-		if ( ! $this->isValidResult($address, $webService))
+		if ( ! $this->isValidResult($result, $webService))
 		{
 			return false;
 		}
@@ -340,35 +340,42 @@ class Zip
 
 		foreach($webService['fields'] as $field => $originalName)
 		{
-			$value = array_get($address, $originalName);
+			if ($originalName)
+			{
+				$value = array_get($result, $originalName);
 
-			$array[$field] = $value;
+				$array[$field] = $value;
+			}
 		}
 
 		return $array;
 	}
 
 	/**
-	 * Check if an address is valid.
+	 * Check if an result is valid.
 	 *
-	 * @param $address
+	 * @param $result
 	 * @param $webService
 	 * @return bool
 	 */
-	private function isValidResult($address, $webService)
+	private function isValidResult($result, $webService)
 	{
 		$valid = true;
 
 		foreach($webService['fields'] as $field => $originalName)
 		{
-			if (isset($webService[$field]))
+			if ($originalName)
 			{
-				$has = array_get($address, $originalName);
-				$valid = $valid && $has;
-
-				if ( ! $has)
+				if (isset($webService[$field]))
 				{
-					$this->addError("Result field '$field' was not found.");
+					$has = array_get($result, $originalName);
+
+					$valid = $valid && $has;
+
+					if ( ! $has)
+					{
+						$this->addError("Result field '$field' was not found.");
+					}
 				}
 			}
 		}
@@ -381,9 +388,9 @@ class Zip
 				{
 					$field = substr($key, 7);
 
-					if ( ! $valid = $valid && $address[$field] == $webService[$key])
+					if ( ! $valid = $valid && $result[$field] == $webService[$key])
 					{
-						$this->addError("Verification field $key should be '$webService[$key]' and is '$address[$field]'.");
+						$this->addError("Verification field $key should be '$webService[$key]' and is '$result[$field]'.");
 					};
 				}
 			}
@@ -427,9 +434,9 @@ class Zip
 	{
 		$this->setZip($zip);
 
-		if ($address = $this->gatherInformationFromZip($this->getZip(), $webService))
+		if ($result = $this->gatherInformationFromZip($this->getZip(), $webService))
 		{
-			if ($this->setResult($address, $webService))
+			if ($this->setResult($result, $webService))
 			{
 				return $this->getResult();
 			}

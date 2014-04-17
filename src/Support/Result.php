@@ -4,11 +4,11 @@ namespace PragmaRX\Zip\Support;
 
 class Result {
 
-	public function __construct($address = null)
+	public function __construct($address = null, $fields = null)
 	{
 		if ($address)
 		{
-			$this->parse($address);
+			$this->parse($address, $fields);
 		}
 	}
 
@@ -21,6 +21,8 @@ class Result {
 	 */
 	public function parse(array $address, $fields)
 	{
+		$this->dropProperties();
+
 		if ($address instanceof Address)
 		{
 			$address = $address->toArray();
@@ -50,5 +52,13 @@ class Result {
 		return json_encode(
 			$this->toArray()
 		);
+	}
+
+	private function dropProperties()
+	{
+		foreach(get_object_vars($this) as $name => $property)
+		{
+			unset($this->{$name});
+		}
 	}
 }
