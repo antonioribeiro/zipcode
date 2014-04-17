@@ -10,12 +10,12 @@ class ZipSpec extends ObjectBehavior
 {
 	private $numberOfWebServicesAvailable = 5;
 
-	private $webServiceExample = array(
+	private $webServicesExample = [
 
 		'zip_length' => 8,
 
-		'web_services' => array(
-			array(
+		'web_services' => [
+			[
 				'name' => 'testwebService',
 				'url' => 'testwebService',
 				'query' => '',
@@ -29,21 +29,21 @@ class ZipSpec extends ObjectBehavior
 				'neighborhood' => 'bairro',
 				'street_kind' => 'tipo_logradouro',
 				'street_name' => 'logradouro',
-			),
-		),
+			],
+		],
 
-	);
+	];
 
-	private $wrongWebServiceExample = array(
+	private $wrongWebServiceExample = [
 		'name' => 'testwebService',
 		'url' => 'testwebService',
 		'query' => '',
 		'result_type' => 'json',
 		'zip_format' => '99999999',
 		'_check_resultado' => '1',
-	);
+	];
 
-	private $addressExample = array(
+	private $addressExample = [
 		'resultado' => '1',
 		'zip' => '20250030',
 		'uf' => 'RJ',
@@ -51,7 +51,7 @@ class ZipSpec extends ObjectBehavior
 		'bairro' => 'Estácio',
 		'tipo_logradouro' => 'Rua',
 		'logradouro' => 'Professor Quintino do Vale',
-	);
+	];
 
 	public function let(Http $http)
 	{
@@ -65,9 +65,11 @@ class ZipSpec extends ObjectBehavior
 
     public function it_knows_valid_zips()
     {
-    	$this->validateZip('20.250-030')->shouldBe(true);
-    	$this->validateZip('2.0.2.5.0-0.3.0')->shouldBe(true);
-    	$this->validateZip('cep:20250030')->shouldBe(true);
+    	$this->validateZip('20.250-030')->shouldBe('20250030');
+
+    	$this->validateZip('2.0.2.5.0-0.3.0')->shouldBe('20250030');
+
+    	$this->validateZip('20250030')->shouldBe('20250030');
     }
 
 	public function it_know_how_to_clear_a_zip_string()
@@ -75,18 +77,13 @@ class ZipSpec extends ObjectBehavior
 		$this->clearZip('2.0.2.5.0-0.3.0')->shouldBe('20250030');
 	}
 
-    public function it_knows_invalid_zips()
+    public function it_throws_on_invalid_zips()
     {
-    	$this->validateZip('2')->shouldBe(false);
-    	$this->validateZip('a')->shouldBe(false);
-    	$this->validateZip('2025003a')->shouldBe(false);
-    }
+	    $this->shouldThrow('PragmaRX\Zip\Exceptions\InvalidZip')->duringValidateZip('2');
 
-    public function it_doesnt_accept_wrong_zips()
-    {
-    	$this->setZip('1')->shouldBe(false);
+	    $this->shouldThrow('PragmaRX\Zip\Exceptions\InvalidZip')->duringValidateZip('a');
 
-	    $this->getErrors()->shouldBe(array("Zip code '1' is not valid."));
+	    $this->shouldThrow('PragmaRX\Zip\Exceptions\InvalidZip')->duringValidateZip('2025003333');
     }
 
     public function it_has_webServices()
@@ -105,14 +102,14 @@ class ZipSpec extends ObjectBehavior
 
     public function it_can_add_webService()
     {
-    	$this->addWebService(array());
+    	$this->addWebService([]);
 
     	$this->getWebServices()->shouldHaveCount(count($this->getWebServices()) + $this->numberOfWebServicesAvailable);
     }
 
 	public function it_can_reach_zip_webServices($http)
 	{
-		$this->setWebServices($this->webServiceExample);
+		$this->setWebServices($this->webServicesExample);
 
 		$http->ping("testwebService")->willReturn(true);
 
@@ -121,9 +118,9 @@ class ZipSpec extends ObjectBehavior
 
 	public function it_can_find_a_zip($http)
 	{
-		$this->setWebServices($this->webServiceExample);
+		$this->setWebServices($this->webServicesExample);
 
-		$http->consume("testwebService", "json")->willReturn($this->addressExample);
+		$http->consume("testwebService")->willReturn($this->addressExample);
 
 		$this->findZip('20250030')->shouldHaveType('PragmaRX\Zip\Support\Address');
 	}
@@ -152,9 +149,9 @@ class ZipSpec extends ObjectBehavior
 
 	public function it_gets_a_correct_zip_after_search($http)
 	{
-		$this->setWebServices($this->webServiceExample);
+		$this->setWebServices($this->webServicesExample);
 
-		$http->consume("testwebService", "json")->willReturn($this->addressExample);
+		$http->consume("testwebService")->willReturn($this->addressExample);
 
 		$this->findZip('20250030');
 
@@ -163,9 +160,9 @@ class ZipSpec extends ObjectBehavior
 
 	public function it_gets_an_empty_list_of_errors_on_success($http)
 	{
-		$this->setWebServices($this->webServiceExample);
+		$this->setWebServices($this->webServicesExample);
 
-		$http->consume("testwebService", "json")->willReturn($this->addressExample);
+		$http->consume("testwebService")->willReturn($this->addressExample);
 
 		$this->findZip('20250030');
 
@@ -185,7 +182,7 @@ class ZipSpec extends ObjectBehavior
 
 		$this->addWebService($this->wrongWebServiceExample);
 
-		$http->consume("testwebService", "json")->willReturn(array()); // returns an empty address
+		$http->consume("testwebService")->willReturn([]); // returns an empty address
 
 		$this->findZip('20250030');
 
@@ -203,5 +200,21 @@ class ZipSpec extends ObjectBehavior
 		$this->formatZip('99750', '99.999')->shouldBe('99.750');
 
 		$this->formatZip('123456', '9.9\9/9-9#9')->shouldBe('1.2\3/4-5#6');
+
+		$this->formatZip('A1A1A1', '999 999')->shouldBe('A1A 1A1');
 	}
+
+	public function it_throws_on_invalid_webservice()
+	{
+		$this->shouldThrow('PragmaRX\Zip\Exceptions\WebServicesNotFound')->duringGetWebServiceByName('ZZ');
+	}
+
+	public function it_can_find_a_webservice_by_name()
+	{
+		$this->setWebServices($this->webServicesExample);
+
+		$this->getWebServiceByName('testwebService')->shouldBe($this->webServicesExample['web_services'][0]);
+	}
+
 }
+
