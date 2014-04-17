@@ -2,9 +2,10 @@
 
 namespace PragmaRX\Zip;
 
+use PragmaRX\Zip\Exceptions\InvalidZip;
+use PragmaRX\Zip\Exceptions\WebServicesNotFound;
 use PragmaRX\Zip\Support\Http;
 use PragmaRX\Zip\Support\Address;
-use PragmaRX\Zip\Exceptions\WebServicesNotFound;
 
 class Zip
 {
@@ -15,6 +16,11 @@ class Zip
 	 */
 	private $http;
 
+	/**
+	 * The list of web services.
+	 *
+	 * @var
+	 */
 	private $webServices;
 
 	/**
@@ -31,6 +37,11 @@ class Zip
 	 */
 	private $zip;
 
+	/**
+	 * The preferred web service.
+	 *
+	 * @var
+	 */
 	private $preferredWebService;
 
 	/**
@@ -41,9 +52,11 @@ class Zip
 	private $address;
 
 	/**
+	 * The list of errors.
+	 *
 	 * @var array
 	 */
-	private $errors = array();
+	private $errors = [];
 
 	/**
 	 * The class constructor.
@@ -69,27 +82,26 @@ class Zip
 	{
 		$this->clearErrors();
 
-		if ( ! $this->validateZip($zip))
-		{
-			$this->addError("Zip code '$zip' is not valid.");
-
-			return false;
-		}
-
-		$this->zip = $this->clearZip($zip);
+		$this->zip = $this->validateZip($zip);
 	}
 
 	/**
 	 * Zip validator.
 	 *
 	 * @param $zip
+	 * @throws Exceptions\InvalidZip
 	 * @return bool
 	 */
 	public function validateZip($zip)
 	{
 		$zip = $this->clearZip($zip);
 
-		return is_numeric($zip) && strlen($zip) === $this->getZipLength();
+		if ($this->getZipLength() && strlen($zip) !== $this->getZipLength())
+		{
+			throw new InvalidZip;
+		}
+
+		return $zip;
 	}
 
 	/**
@@ -146,6 +158,13 @@ class Zip
 		return $webservices;
 	}
 
+	/**
+	 * Search a web service by its name.
+	 *
+	 * @param $name
+	 * @return int|string
+	 * @throws Exceptions\WebServicesNotFound
+	 */
 	private function searchWebServiceByName($name)
 	{
 		foreach($this->webServices['web_services'] as $key => $service)
@@ -156,17 +175,18 @@ class Zip
 			}
 		}
 
-		return false;
+		throw new WebServicesNotFound("Webservice '$name' was not found.");
 	}
 
-	public function getWebServicesByName($name)
+	/**
+	 * Get a web service by its name.
+	 *
+	 * @param $name
+	 * @return mixed
+	 */
+	public function getWebServiceByName($name)
 	{
-		if ($key = $this->searchWebServiceByName($name))
-		{
-			return $this->webServices['web_services'][$key];
-		}
-
-		return false;
+		return $this->webServices['web_services'][$this->searchWebServiceByName($name)];
 	}
 
 	/**
@@ -204,17 +224,17 @@ class Zip
 	 * Search a zip via HTTP.
 	 *
 	 * @param $zip
-	 * @param $url
-	 * @param $query
-	 * @param $resultType
-	 * @param $format
+	 * @param $webService
+	 * @internal param $url
+	 * @internal param $query
+	 * @internal param $format
 	 * @return array|bool
 	 */
 	public function gatherInformationFromZip($zip, $webService)
 	{
 		$url = $this->buildUrl($zip, $webService['url'], $webService['query'], $webService['zip_format']);
 
-		if ($address = $this->http->consume($url, $webService['result_type']))
+		if ($address = $this->http->consume($url))
 		{
 			$address['zip'] = ! isset($address['zip']) || empty($address['zip']) 
 								? $zip 
@@ -238,7 +258,7 @@ class Zip
 	 */
 	public function clearZip($zip)
 	{
-		return $zip = preg_replace("/[^0-9]/", "", $zip);
+		return $zip = preg_replace("/[^0-9A-Za-z]/", "", $zip);
 	}
 
 	/**
@@ -316,7 +336,7 @@ class Zip
 			return false;
 		}
 
-		$array = array();
+		$array = [];
 
 		foreach(Address::$fields as $field)
 		{
@@ -400,7 +420,7 @@ class Zip
 	 */
 	private function clearErrors()
 	{
-		$this->errors = array();
+		$this->errors = [];
 	}
 
 	/**
@@ -425,12 +445,21 @@ class Zip
 		return false;
 	}
 
+	/**
+	 * Format a zip string.
+	 *
+	 * @param $zip
+	 * @param $format
+	 * @return string
+	 */
 	public function formatZip($zip, $format)
 	{
 		return format_masked($this->clearZip($zip), $format);
 	}
 
 	/**
+	 * Country getter.
+	 *
 	 * @return string
 	 */
 	public function getCountry()
@@ -439,6 +468,8 @@ class Zip
 	}
 
 	/**
+	 * Country setter.
+	 *
 	 * @param string $country
 	 */
 	public function setCountry($country)
@@ -448,11 +479,22 @@ class Zip
 		$this->loadWebServices($country);
 	}
 
+	/**
+	 * Get the current country zip lenght.
+	 *
+	 * @return mixed
+	 */
 	private function getZipLength()
 	{
 		return $this->webServices['zip_length'];
 	}
 
+	/**
+	 * Load all web services for a country.
+	 *
+	 * @param $country
+	 * @throws Exceptions\WebServicesNotFound
+	 */
 	private function loadWebServices($country)
 	{
 		$file = __DIR__."/Support/WebServices/Countries/$country.php";
@@ -472,13 +514,43 @@ class Zip
 		}
 	}
 
+	/**
+	 * Clear the list of webservices.
+	 *
+	 */
 	public function clearWebServicesList()
 	{
-		$this->webServices['web_services'] = array();
+		$this->webServices['web_services'] = [];
 	}
 
+	/**
+	 * Preferred web service setter.
+	 *
+	 * @param $service
+	 */
 	public function setPreferredWebService($service)
 	{
 		$this->preferredWebService = $service;
 	}
+
+	/**
+	 * User agent setter.
+	 *
+	 * @param $userAgent
+	 */
+	public function setUserAgent($userAgent)
+	{
+		$this->http->setUserAgent($userAgent);
+	}
+
+	/**
+	 * User agent getter.
+	 *
+	 * @return mixed
+	 */
+	public function getUserAgent()
+	{
+		return $this->http->getUserAgent();
+	}
+
 }
