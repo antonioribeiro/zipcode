@@ -3,13 +3,20 @@
 namespace PragmaRX\Zip\Support;
 
 use GuzzleHttp\Client as Guzzle;
-use GuzzleHttp\Exception\AdapterException;
+use GuzzleHttp\Exception\RequestException;
 
 class Http {
 
+	/**
+	 * User agent internal string.
+	 *
+	 * @var string
+	 */
 	private $userAgent = 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11';
 
 	/**
+	 * User agent getter.
+	 *
 	 * @return mixed
 	 */
 	public function getUserAgent()
@@ -18,6 +25,8 @@ class Http {
 	}
 
 	/**
+	 * User agent setter.
+	 *
 	 * @param mixed $userAgent
 	 */
 	public function setUserAgent($userAgent)
@@ -25,65 +34,80 @@ class Http {
 		$this->userAgent = $userAgent;
 	}
 
-	public function access($url, $resultType)
+	/**
+	 * Consume an url.
+	 *
+	 * @param $url
+	 * @return bool|mixed
+	 */
+	public function consume($url)
 	{
-		$client = new \GuzzleHttp\Client();
-
-		$client = new \GuzzleHttp\Client(array(
-		    'defaults' => array(
-			    'headers' => array('User-Agent' => $this->getUserAgent())
-			)
-		));
+		$this->instantiateGuzzle();
 
 		try
 		{
-			$response = $client->get($url);
+			$response = $this->guzzle->get($url);
 		}
-		catch(\GuzzleHttp\Exception\RequestException $e)
+		catch(RequestException $e)
 		{
 			return false;
 		}
 
-		if ($response->getStatusCode() != 200)
-		{
-			return false;
-		}
-
-		return $this->decode($response->getBody(), $resultType);
+		return $response->getStatusCode() != 200
+				? false
+				: $this->decode($response->getBody());
 	}
 
+	/**
+	 * Check if a site is up.
+	 *
+	 * @param $url
+	 * @return bool
+	 */
 	public function ping($url)
 	{
-		return true;
+		$result = $this->consume($url, 'none');
+
+		return ! empty($result);
 	}
 
-	public function consume($url, $resultType)
+	/**
+	 * Decode a request result.
+	 *
+	 * @param $body
+	 * @return mixed
+	 */
+	private function decode($body)
 	{
-		return $this->access($url, $resultType);
-	}
-
-	private function decode($body, $resultType)
-	{
-		if ($resultType == 'json')
+		if (is_json($body))
 		{
 			return json_decode($body, true);
 		}
 		else
-		if ($resultType == 'xml')
+		if (is_xml($body))
 		{
-			return $this->xmlToJson($body);
+			return xml_to_json($body);
 		}
 
 		return $body;
 	}
 
-	private function xmlToJson($text)
+	/**
+	 * Creates a Guzzle instance.
+	 *
+	 */
+	private function instantiateGuzzle()
 	{
-		$xml = simplexml_load_string($text);
+		if (isset($this->guzzle))
+		{
+			unset($this->guzzle);
+		}
 
-		$json = json_encode($xml);
-
-		return json_decode($json,TRUE);
+		$this->guzzle = new Guzzle([
+			'defaults' => [
+				'headers' => ['User-Agent' => $this->getUserAgent()]
+			]
+		]);
 	}
 
 }
