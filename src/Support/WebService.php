@@ -19,7 +19,15 @@ class WebService {
 		'zip',
 		'web_service',
 		'country_id',
-	]
+	];
+
+	public function __construct($service = null)
+	{
+		if ($service)
+		{
+			$this->parse($service);
+		}
+	}
 
 	public function parse($webService)
 	{
@@ -74,4 +82,10 @@ class WebService {
 		return $this->zipFormat;
 	}
 
+	public function getField($field)
+	{
+		return isset($this->fields[$field])
+				? $this->fields[$field]
+				: null;
+	}
 } 

@@ -6,6 +6,7 @@ use PragmaRX\Zip\Exceptions\InvalidZip;
 use PragmaRX\Zip\Exceptions\WebServicesNotFound;
 use PragmaRX\Zip\Support\Http;
 use PragmaRX\Zip\Support\Result;
+use PragmaRX\Zip\Support\Country;
 
 class Zip
 {
@@ -23,26 +24,19 @@ class Zip
 	 */
 	private $webServices;
 
-	/**
-	 * Current country.
-	 *
-	 * @var string
-	 */
-	private $country = 'BR';
 
+	/**
+	 * The country object, which also holds the related web services.
+	 *
+	 * @var Support\Country
+	 */
+	private $country;
 	/**
 	 * The current zip being searched.
 	 *
 	 * @var
 	 */
 	private $zip;
-
-	/**
-	 * The preferred web service.
-	 *
-	 * @var
-	 */
-	private $preferredWebService;
 
 	/**
 	 * The current result found.
@@ -63,13 +57,17 @@ class Zip
 	 *
 	 * @param Http $http
 	 */
-	public function __construct(Http $http)
+	public function __construct(Http $http = null)
 	{
-		$this->http = $http;
+		$this->http = ! $http
+						? new Http()
+						: $http;
 
 		$this->result = new Result();
 
-		$this->setCountry($this->country);
+		$this->country = new Country();
+
+		$this->setCountry('BR');
 	}
 
 	/**
@@ -113,7 +111,7 @@ class Zip
 	{
 		foreach($this->getWebServices() as $webService)
 		{
-			if ($this->http->ping($webService['url']))
+			if ($this->http->ping($webService->getUrl()))
 			{
 				return true;
 			}
@@ -131,7 +129,7 @@ class Zip
 	 */
 	public function setWebServices($webServices)
 	{
-		$this->webServices = $webServices;
+		$this->country->setWebServices($webServices);
 	}
 
 	/**
@@ -141,62 +139,7 @@ class Zip
 	 */
 	public function getWebServices()
 	{
-		$webservices = $this->webServices['web_services'];
-
-		if ($this->preferredWebService)
-		{
-			if ($key = $this->searchWebServiceByName($this->preferredWebService))
-			{
-				$service = $webservices[$key];
-
-			    unset($webservices[$key]);
-
-			    array_insert($webservices, $service, 0);
-			}
-		}
-
-		return $webservices;
-	}
-
-	/**
-	 * Search a web service by its name.
-	 *
-	 * @param $name
-	 * @return int|string
-	 * @throws Exceptions\WebServicesNotFound
-	 */
-	private function searchWebServiceByName($name)
-	{
-		foreach($this->webServices['web_services'] as $key => $service)
-		{
-			if ($service['name'] == $name)
-			{
-				return $key;
-			}
-		}
-
-		throw new WebServicesNotFound("Webservice '$name' was not found.");
-	}
-
-	/**
-	 * Get a web service by its name.
-	 *
-	 * @param $name
-	 * @return mixed
-	 */
-	public function getWebServiceByName($name)
-	{
-		return $this->webServices['web_services'][$this->searchWebServiceByName($name)];
-	}
-
-	/**
-	 * Add a web service to the list of webServices.
-	 *
-	 * @param $webService
-	 */
-	public function addWebService($webService)
-	{
-		$this->webServices['web_services'][] = $webService;
+		return $this->country->getWebServices();
 	}
 
 	/**
@@ -232,7 +175,7 @@ class Zip
 	 */
 	public function gatherInformationFromZip($zip, $webService)
 	{
-		$url = $this->buildUrl($zip, $webService['url'], $webService['query'], $webService['zip_format']);
+		$url = $this->buildUrl($zip, $webService->getUrl(), $webService->getQuery(), $webService->getZipFormat());
 
 		if ($result = $this->http->consume($url))
 		{
@@ -241,10 +184,10 @@ class Zip
 								: $result['zip'];
 
 			$result['country_id'] = ! isset($result['country_id']) || empty($result['country_id'])
-									? $this->getCountry() 
+									? $this->country->getId()
 									: $result['country_id'];
 
-			$result['web_service'] = $webService['name'];
+			$result['web_service'] = $webService->getName();
 		}
 
 		return $result;
@@ -285,7 +228,7 @@ class Zip
 			return false;
 		}
 
-		return $this->result->parse($result, $webService['fields']);
+		return $this->result->parse($result, $webService->getFields());
 	}
 
 	/**
@@ -338,7 +281,7 @@ class Zip
 
 		$array = [];
 
-		foreach($webService['fields'] as $field => $originalName)
+		foreach($webService->getFields() as $field => $originalName)
 		{
 			if ($originalName)
 			{
@@ -362,11 +305,11 @@ class Zip
 	{
 		$valid = true;
 
-		foreach($webService['fields'] as $field => $originalName)
+		foreach($webService->getFields() as $field => $originalName)
 		{
 			if ($originalName)
 			{
-				if (isset($webService[$field]))
+				if ($webService->getField($field))
 				{
 					$has = array_get($result, $originalName);
 
@@ -388,9 +331,9 @@ class Zip
 				{
 					$field = substr($key, 7);
 
-					if ( ! $valid = $valid && $result[$field] == $webService[$key])
+					if ( ! $valid = $valid && $result[$field] == $webService->getField($key))
 					{
-						$this->addError("Verification field $key should be '$webService[$key]' and is '$result[$field]'.");
+						$this->addError("Verification field $key should be '".$webService->getField($key)."' and is '$result[$field]'.");
 					};
 				}
 			}
@@ -474,9 +417,9 @@ class Zip
 	 */
 	public function setCountry($country)
 	{
-		$this->country = $country;
+		$this->country->setId($country);
 
-		$this->loadWebServices($country);
+		$this->country->absorbCountryData($this->loadWebServices($country));
 	}
 
 	/**
@@ -486,13 +429,14 @@ class Zip
 	 */
 	private function getZipLength()
 	{
-		return $this->webServices['zip_length'];
+		return $this->country->getZipLength();
 	}
 
 	/**
 	 * Load all web services for a country.
 	 *
 	 * @param $country
+	 * @return mixed
 	 * @throws Exceptions\WebServicesNotFound
 	 */
 	private function loadWebServices($country)
@@ -506,21 +450,12 @@ class Zip
 
 		try
 		{
-			$this->setWebServices(require($file));
+			return require($file);
 		}
 		catch(\Exception $e)
 		{
 			throw new WebServicesNotFound("Error loading web services for country country '$country': ".$e->getMessage(), 1);
 		}
-	}
-
-	/**
-	 * Clear the list of webservices.
-	 *
-	 */
-	public function clearWebServicesList()
-	{
-		$this->webServices['web_services'] = [];
 	}
 
 	/**
@@ -530,7 +465,7 @@ class Zip
 	 */
 	public function setPreferredWebService($service)
 	{
-		$this->preferredWebService = $service;
+		$this->country->setPreferredWebService($service);
 	}
 
 	/**
@@ -553,4 +488,18 @@ class Zip
 		return $this->http->getUserAgent();
 	}
 
+	public function addWebService($webService)
+	{
+		return $this->country->addWebService($webService);
+	}
+
+	public function getWebServiceByName($name)
+	{
+		return $this->country->getWebServiceByName($name);
+	}
+
+	public function clearWebServicesList()
+	{
+		$this->country->clearWebServicesList();
+	}
 }

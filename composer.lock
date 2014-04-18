@@ -3,7 +3,7 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "c95c21c4fa7908cc31d15731e9478930",
+    "hash": "50e48a0bd0a0f008b93f616ea25fb309",
     "packages": [
         {
             "name": "guzzlehttp/guzzle",
@@ -120,21 +120,73 @@
             "time": "2014-04-03 04:48:24"
         },
         {
+            "name": "illuminate/support",
+            "version": "v4.1.28",
+            "target-dir": "Illuminate/Support",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/illuminate/support.git",
+                "reference": "69b248f240719e8d764ee6ec0384819fa57d60bb"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/illuminate/support/zipball/69b248f240719e8d764ee6ec0384819fa57d60bb",
+                "reference": "69b248f240719e8d764ee6ec0384819fa57d60bb",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "require-dev": {
+                "jeremeamia/superclosure": "1.0.*",
+                "mockery/mockery": "0.9.*",
+                "patchwork/utf8": "1.1.*",
+                "phpunit/phpunit": "4.0.*"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "4.1-dev"
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "Illuminate\\Support": ""
+                },
+                "files": [
+                    "Illuminate/Support/helpers.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Taylor Otwell",
+                    "email": "taylorotwell@gmail.com",
+                    "homepage": "https://github.com/taylorotwell",
+                    "role": "Developer"
+                }
+            ],
+            "time": "2014-03-22 20:29:54"
+        },
+        {
             "name": "pragmarx/support",
             "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/antonioribeiro/support.git",
-                "reference": "f9d1b8bf05b49699ba6e0f429ff686c580063463"
+                "reference": "e0cddc76a84d42f66a7c6eb8051ce1134fb7da4c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/antonioribeiro/support/zipball/f9d1b8bf05b49699ba6e0f429ff686c580063463",
-                "reference": "f9d1b8bf05b49699ba6e0f429ff686c580063463",
+                "url": "https://api.github.com/repos/antonioribeiro/support/zipball/e0cddc76a84d42f66a7c6eb8051ce1134fb7da4c",
+                "reference": "e0cddc76a84d42f66a7c6eb8051ce1134fb7da4c",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.3.7"
+                "php": ">=5.4.0"
             },
             "require-dev": {
                 "mockery/mockery": "0.8.0"
@@ -173,7 +225,7 @@
                 "laravel",
                 "pragmarx"
             ],
-            "time": "2014-04-17 14:39:17"
+            "time": "2014-04-17 23:17:01"
         }
     ],
     "packages-dev": [

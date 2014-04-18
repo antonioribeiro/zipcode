@@ -3,6 +3,7 @@
 namespace spec\PragmaRX\Zip;
 
 use PhpSpec\ObjectBehavior;
+use PragmaRX\Zip\Support\WebService;
 use Prophecy\Argument;
 use PragmaRX\Zip\Support\Http;
 
@@ -91,6 +92,8 @@ class ZipSpec extends ObjectBehavior
     {
 	    $this->shouldThrow('PragmaRX\Zip\Exceptions\InvalidZip')->duringValidateZip('2');
 
+	    $this->getCountry()->absorbCountryData($this->webServicesExample);
+
 	    $this->shouldThrow('PragmaRX\Zip\Exceptions\InvalidZip')->duringValidateZip('a');
 
 	    $this->shouldThrow('PragmaRX\Zip\Exceptions\InvalidZip')->duringValidateZip('2025003333');
@@ -103,12 +106,6 @@ class ZipSpec extends ObjectBehavior
     	$this->getWebServices()->shouldHaveCount($this->numberOfWebServicesAvailable);
     }
 
-    public function it_can_set_webServices()
-    {
-    	$this->setWebServices(null);
-
-    	$this->getWebServices()->shouldBeNull();
-    }
 
     public function it_can_add_webService()
     {
@@ -119,7 +116,7 @@ class ZipSpec extends ObjectBehavior
 
 	public function it_can_reach_zip_webServices($http)
 	{
-		$this->setWebServices($this->webServicesExample);
+		$this->getCountry()->absorbCountryData($this->webServicesExample);
 
 		$http->ping("testwebService")->willReturn(true);
 
@@ -128,7 +125,7 @@ class ZipSpec extends ObjectBehavior
 
 	public function it_can_find_a_zip($http)
 	{
-		$this->setWebServices($this->webServicesExample);
+		$this->getCountry()->absorbCountryData($this->webServicesExample);
 
 		$http->consume("testwebService")->willReturn($this->resultExample);
 
@@ -159,7 +156,7 @@ class ZipSpec extends ObjectBehavior
 
 	public function it_gets_a_correct_zip_after_search($http)
 	{
-		$this->setWebServices($this->webServicesExample);
+		$this->getCountry()->absorbCountryData($this->webServicesExample);
 
 		$http->consume("testwebService")->willReturn($this->resultExample);
 
@@ -170,7 +167,7 @@ class ZipSpec extends ObjectBehavior
 
 	public function it_gets_an_empty_list_of_errors_on_success($http)
 	{
-		$this->setWebServices($this->webServicesExample);
+		$this->getCountry()->absorbCountryData($this->webServicesExample);
 
 		$http->consume("testwebService")->willReturn($this->resultExample);
 
@@ -184,19 +181,6 @@ class ZipSpec extends ObjectBehavior
 		$this->clearWebServicesList();
 
 		$this->getWebServices()->shouldHaveCount(0);
-	}
-
-	public function it_gets_a_filled_list_of_errors_on_failed_search($http)
-	{
-		$this->clearWebServicesList();
-
-		$this->addWebService($this->wrongWebServiceExample);
-
-		$http->consume("testwebService")->willReturn([]); // returns an empty result
-
-		$this->findZip('20250030');
-
-		$this->getErrors()->shouldHaveCount(1); /// result is invalid error message
 	}
 
 	public function it_formats_zip_correctly()
@@ -221,9 +205,9 @@ class ZipSpec extends ObjectBehavior
 
 	public function it_can_find_a_webservice_by_name()
 	{
-		$this->setWebServices($this->webServicesExample);
+		$this->getCountry()->absorbCountryData($this->webServicesExample);
 
-		$this->getWebServiceByName('testwebService')->shouldBe($this->webServicesExample['web_services'][0]);
+		$this->getWebServiceByName('testwebService')->shouldHaveType('PragmaRX\Zip\Support\WebService');
 	}
 
 	public function it_can_set_a_zip()
@@ -235,7 +219,7 @@ class ZipSpec extends ObjectBehavior
 
 	public function it_can_gather_information_from_zip($http)
 	{
-		$this->setWebServices($this->webServicesExample);
+		$this->getCountry()->absorbCountryData($this->webServicesExample);
 
 		$webService = $this->getWebServiceByName('testwebService');
 
@@ -248,7 +232,7 @@ class ZipSpec extends ObjectBehavior
 	{
 		$this->setCountry('CA');
 
-		$this->getCountry()->shouldBe('CA');
+		$this->getCountry()->getId()->shouldBe('CA');
 	}
 
 	public function it_can_set_a_user_agent($http)
