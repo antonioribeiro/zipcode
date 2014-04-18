@@ -1,4 +1,20 @@
 {
+    "name": "pragmarx/zipcode",
+
+    "description": "A worldwide address-by-zipcode searcher.",
+
+    "keywords": ["address", "zip code", "zip", "laravel"],
+
+    "license": "BSD-3-Clause",
+
+    "authors": [
+        {
+            "name": "Antonio Carlos Ribeiro",
+            "email": "acr@antoniocarlosribeiro.com",
+            "role": "Creator"
+        }
+    ],
+
     "require": {
         "pragmarx/support": "0.2.*@dev",
         "guzzlehttp/guzzle": "~4.0"
@@ -13,4 +29,13 @@
             "PragmaRX\\ZIPcode\\": "src/"
         }
     }
+
+    "extra": {
+        "component": "package",
+        "branch-alias": {
+            "dev-master": "1.0-dev"
+        }
+    },
+
+    "minimum-stability": "dev"
 }
