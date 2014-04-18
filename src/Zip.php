@@ -129,7 +129,7 @@ class Zip
 	 */
 	public function setWebServices($webServices)
 	{
-		$this->country->setWebServices($webServices);
+		$this->country->getWebServices()->setWebServices($webServices);
 	}
 
 	/**
@@ -465,7 +465,7 @@ class Zip
 	 */
 	public function setPreferredWebService($service)
 	{
-		$this->country->setPreferredWebService($service);
+		$this->country->getWebServices()->setPreferredWebService($service);
 	}
 
 	/**
@@ -488,18 +488,33 @@ class Zip
 		return $this->http->getUserAgent();
 	}
 
+	/**
+	 * Add a web service to the list of web services.
+	 *
+	 * @param $webService
+	 */
 	public function addWebService($webService)
 	{
-		return $this->country->addWebService($webService);
+		return $this->country->getWebServices()->addWebService($webService);
 	}
 
+	/**
+	 * Get a web service by name.
+	 *
+	 * @param $name
+	 * @return mixed
+	 */
 	public function getWebServiceByName($name)
 	{
-		return $this->country->getWebServiceByName($name);
+		return $this->country->getWebServices()->getWebServiceByName($name);
 	}
 
+	/**
+	 * Remove all web services from the list of web services.
+	 *
+	 */
 	public function clearWebServicesList()
 	{
-		$this->country->clearWebServicesList();
+		$this->country->getWebServices()->clearWebServicesList();
 	}
 }

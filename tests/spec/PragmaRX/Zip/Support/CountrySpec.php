@@ -64,7 +64,7 @@ class CountrySpec extends ObjectBehavior
 		$this->getZipLength()->shouldBe(8);
 	}
 
-	public function it_can_get_webservices_from_imported_data()
+	public function it_can_get_web_services_from_imported_data()
 	{
 		$this->absorbCountryData($this->countryData);
 

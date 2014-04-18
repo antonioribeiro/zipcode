@@ -80,6 +80,8 @@ class Country {
 	}
 
 	/**
+	 * Get the web services object.
+	 *
 	 * @return array
 	 */
 	public function getWebServices()

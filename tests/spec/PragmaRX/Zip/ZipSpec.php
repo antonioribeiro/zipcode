@@ -101,17 +101,7 @@ class ZipSpec extends ObjectBehavior
 
     public function it_has_webServices()
     {
-    	$this->getWebServices()->shouldBeArray();
-
-    	$this->getWebServices()->shouldHaveCount($this->numberOfWebServicesAvailable);
-    }
-
-
-    public function it_can_add_webService()
-    {
-    	$this->addWebService([]);
-
-    	$this->getWebServices()->shouldHaveCount(count($this->getWebServices()) + $this->numberOfWebServicesAvailable);
+    	$this->getWebServices()->shouldHaveType('PragmaRX\Zip\Support\WebServices');
     }
 
 	public function it_can_reach_zip_webServices($http)
@@ -136,7 +126,7 @@ class ZipSpec extends ObjectBehavior
 	{
 		$this->setCountry('US');
 
-		$this->getWebServices()->shouldBeArray();
+		$this->getWebServices()->shouldHaveType('PragmaRX\Zip\Support\WebServices');
 	}
 
 	public function it_throws_on_unavailable_country()
