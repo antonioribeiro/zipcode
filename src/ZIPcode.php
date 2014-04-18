@@ -1,14 +1,15 @@
 <?php
 
-namespace PragmaRX\Zip;
+namespace PragmaRX\ZIPcode;
 
-use PragmaRX\Zip\Exceptions\InvalidZip;
-use PragmaRX\Zip\Exceptions\WebServicesNotFound;
-use PragmaRX\Zip\Support\Http;
-use PragmaRX\Zip\Support\Result;
-use PragmaRX\Zip\Support\Country;
+use PragmaRX\ZIPcode\Exceptions\InvalidZipCode;
+use PragmaRX\ZIPcode\Exceptions\WebServicesNotFound;
+use PragmaRX\ZIPcode\Support\Http;
+use PragmaRX\ZIPcode\Support\Result;
+use PragmaRX\ZIPcode\Support\Country;
+use PragmaRX\ZIPcode\Support\WebService;
 
-class Zip
+class ZIPcode
 {
 	/**
 	 * The HTTP class.
@@ -87,7 +88,7 @@ class Zip
 	 * Zip validator.
 	 *
 	 * @param $zip
-	 * @throws Exceptions\InvalidZip
+	 * @throws Exceptions\InvalidZipCode
 	 * @return bool
 	 */
 	public function validateZip($zip)
@@ -96,7 +97,7 @@ class Zip
 
 		if ($this->getZipLength() && strlen($zip) !== $this->getZipLength())
 		{
-			throw new InvalidZip;
+			throw new InvalidZipCode;
 		}
 
 		return $zip;
@@ -146,16 +147,24 @@ class Zip
 	 * Find an result by zip.
 	 *
 	 * @param $zip
+	 * @param null $webService
 	 * @return bool|void
 	 */
-	public function findZip($zip)
+	public function findZip($zip, $webService = null)
 	{
-		foreach($this->getWebServices() as $webService)
+		if ( ! $webService)
 		{
-			if ($result = $this->searchZipUsingWebService($zip, $webService))
+			foreach($this->getWebServices() as $webService)
 			{
-				return $this->getResult();
+				if ($result = $this->searchZipUsingWebService($zip, $webService))
+				{
+					return $this->getResult();
+				}
 			}
+		}
+		else
+		{
+			return $this->searchZipUsingWebService($zip, $webService);
 		}
 
 		$this->addError('There are no webServices available.');
@@ -168,6 +177,7 @@ class Zip
 	 *
 	 * @param $zip
 	 * @param $webService
+	 * @throws Exceptions\WebServicesNotFound
 	 * @internal param $url
 	 * @internal param $query
 	 * @internal param $format
@@ -180,7 +190,7 @@ class Zip
 		if ($result = $this->http->consume($url))
 		{
 			$result['zip'] = ! isset($result['zip']) || empty($result['zip'])
-								? $zip 
+								? $zip
 								: $result['zip'];
 
 			$result['country_id'] = ! isset($result['country_id']) || empty($result['country_id'])
@@ -371,11 +381,20 @@ class Zip
 	 *
 	 * @param $zip
 	 * @param $webService
+	 * @throws Exceptions\WebServicesNotFound
 	 * @return bool|mixed
 	 */
 	public function searchZipUsingWebService($zip, $webService)
 	{
 		$this->setZip($zip);
+
+		if ( ! $webService instanceof WebService)
+		{
+			if ( ! $webService = $this->getWebServiceByName($webService))
+			{
+				throw new WebServicesNotFound("No web service found with '$webService'");
+			}
+		}
 
 		if ($result = $this->gatherInformationFromZip($this->getZip(), $webService))
 		{
@@ -419,7 +438,7 @@ class Zip
 	{
 		$this->country->setId($country);
 
-		$this->country->absorbCountryData($this->loadWebServices($country));
+		$this->country->setCountryData($this->loadWebServices($country));
 	}
 
 	/**

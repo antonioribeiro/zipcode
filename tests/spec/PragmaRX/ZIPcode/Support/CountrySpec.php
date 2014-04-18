@@ -1,6 +1,6 @@
 <?php
 
-namespace spec\PragmaRX\Zip\Support;
+namespace spec\PragmaRX\ZIPcode\Support;
 
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
@@ -42,7 +42,7 @@ class CountrySpec extends ObjectBehavior
 
     public function it_is_initializable()
     {
-        $this->shouldHaveType('PragmaRX\Zip\Support\Country');
+        $this->shouldHaveType('PragmaRX\ZIPcode\Support\Country');
     }
 
 	public function it_can_set_a_country()
@@ -54,21 +54,21 @@ class CountrySpec extends ObjectBehavior
 
 	public function it_can_import_country_data()
 	{
-		$this->absorbCountryData($this->countryData);
+		$this->setCountryData($this->countryData);
 	}
 
 	public function it_can_import_zip_length_from_country_data()
 	{
-		$this->absorbCountryData($this->countryData);
+		$this->setCountryData($this->countryData);
 
 		$this->getZipLength()->shouldBe(8);
 	}
 
 	public function it_can_get_web_services_from_imported_data()
 	{
-		$this->absorbCountryData($this->countryData);
+		$this->setCountryData($this->countryData);
 
-		$this->getWebServices()->shouldHaveType('PragmaRX\Zip\Support\WebServices');
+		$this->getWebServices()->shouldHaveType('PragmaRX\ZIPcode\Support\WebServices');
 	}
 
 }

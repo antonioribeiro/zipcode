@@ -10,7 +10,7 @@
 
     "autoload": {
         "psr-4": {
-            "PragmaRX\\Zip\\": "src/"
+            "PragmaRX\\ZIPcode\\": "src/"
         }
     }
 }

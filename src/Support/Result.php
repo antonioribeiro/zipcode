@@ -1,6 +1,6 @@
 <?php
 
-namespace PragmaRX\Zip\Support;
+namespace PragmaRX\ZIPcode\Support;
 
 class Result {
 

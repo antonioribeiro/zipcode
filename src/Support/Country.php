@@ -1,8 +1,8 @@
 <?php
 
-namespace PragmaRX\Zip\Support;
+namespace PragmaRX\ZIPcode\Support;
 
-use PragmaRX\Zip\Support\WebServices;
+use PragmaRX\ZIPcode\Support\WebServices;
 
 class Country {
 
@@ -42,7 +42,7 @@ class Country {
 	 *
 	 * @param $webServices
 	 */
-	public function absorbCountryData($webServices)
+	public function setCountryData($webServices)
 	{
 		$this->zipLength = $webServices['zip_length'];
 
@@ -80,7 +80,7 @@ class Country {
 	}
 
 	/**
-	 * Get the web services object.
+	 * Get the web services tied to the country.
 	 *
 	 * @return array
 	 */

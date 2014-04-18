@@ -1,11 +1,11 @@
 <?php
 
-namespace PragmaRX\Zip\Support;
+namespace PragmaRX\ZIPcode\Support;
 
 use ArrayIterator;
 use Countable;
 use IteratorAggregate;
-use PragmaRX\Zip\Exceptions\WebServicesNotFound;
+use PragmaRX\ZIPcode\Exceptions\WebServicesNotFound;
 use ArrayAccess;
 use Traversable;
 

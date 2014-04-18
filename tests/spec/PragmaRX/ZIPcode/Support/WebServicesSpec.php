@@ -1,6 +1,6 @@
 <?php
 
-namespace spec\PragmaRX\Zip\Support;
+namespace spec\PragmaRX\ZIPcode\Support;
 
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
@@ -35,7 +35,7 @@ class WebServicesSpec extends ObjectBehavior
 
 	public function it_is_initializable()
 	{
-		$this->shouldHaveType('PragmaRX\Zip\Support\WebServices');
+		$this->shouldHaveType('PragmaRX\ZIPcode\Support\WebServices');
 	}
 
 	public function it_can_add_webServices()
@@ -63,21 +63,21 @@ class WebServicesSpec extends ObjectBehavior
 
 	public function it_throws_on_invalid_webservice()
 	{
-		$this->shouldThrow('PragmaRX\Zip\Exceptions\WebServicesNotFound')->duringGetWebServiceByName('ZZ');
+		$this->shouldThrow('PragmaRX\ZIPcode\Exceptions\WebServicesNotFound')->duringGetWebServiceByName('ZZ');
 	}
 
 	public function it_can_find_a_webservice_by_name()
 	{
 		$this->setWebServices($this->webServicesExample);
 
-		$this->getWebServiceByName('testwebService')->shouldHaveType('PragmaRX\Zip\Support\WebService');
+		$this->getWebServiceByName('testwebService')->shouldHaveType('PragmaRX\ZIPcode\Support\WebService');
 	}
 
 	public function it_throws_when_web_service_name_is_not_found()
 	{
 		$this->setWebServices($this->webServicesExample);
 
-		$this->shouldThrow('PragmaRX\Zip\Exceptions\WebServicesNotFound')->duringGetWebServiceByName('impossibleWebServiceName');
+		$this->shouldThrow('PragmaRX\ZIPcode\Exceptions\WebServicesNotFound')->duringGetWebServiceByName('impossibleWebServiceName');
 	}
 
 	public function it_can_set_preferred_web_service()

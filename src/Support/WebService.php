@@ -1,6 +1,6 @@
 <?php
 
-namespace PragmaRX\Zip\Support;
+namespace PragmaRX\ZIPcode\Support;
 
 
 class WebService {
@@ -88,4 +88,4 @@ class WebService {
 				? $this->fields[$field]
 				: null;
 	}
-} 
+}
