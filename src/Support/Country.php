@@ -6,14 +6,39 @@ use PragmaRX\Zip\Exceptions\WebServicesNotFound;
 
 class Country {
 
+	/**
+	 * The country id (BR, US...)
+	 *
+	 * @var
+	 */
 	private $id;
 
+	/**
+	 * The length of a zip code on this country.
+	 *
+	 * @var
+	 */
 	private $zipLength;
 
+	/**
+	 * The list of web services.
+	 *
+	 * @var array
+	 */
 	private $webServices = [];
 
+	/**
+	 * The preferred web service.
+	 *
+	 * @var
+	 */
 	private $preferredWebService;
 
+	/**
+	 * Create a country.
+	 *
+	 * @param array $webServices
+	 */
 	public function __construct(array $webServices = array())
 	{
 		if ($webServices)
@@ -22,6 +47,11 @@ class Country {
 		}
 	}
 
+	/**
+	 * Absorb (import) all country data.
+	 *
+	 * @param $webServices
+	 */
 	public function absorbCountryData($webServices)
 	{
 		$this->zipLength = $webServices['zip_length'];
@@ -29,6 +59,11 @@ class Country {
 		$this->setWebServices($webServices['web_services']);
 	}
 
+	/**
+	 * Add a we bservice from an array.
+	 *
+	 * @param $webService
+	 */
 	private function addWebServiceFromArray($webService)
 	{
 		$webService = new WebService($webService);
@@ -36,12 +71,19 @@ class Country {
 		$this->add($webService);
 	}
 
+	/**
+	 * Add an web service.
+	 *
+	 * @param $webService
+	 */
 	private function add($webService)
 	{
 		$this->webServices[] = $webService;
 	}
 
 	/**
+	 * Zip length getter.
+	 *
 	 * @return mixed
 	 */
 	public function getZipLength()
@@ -49,12 +91,18 @@ class Country {
 		return $this->zipLength;
 	}
 
+	/**
+	 * Clear the list of web services.
+	 *
+	 */
 	public function clearWebServicesList()
 	{
 		$this->webServices = [];
 	}
 
 	/**
+	 * Get the country id.
+	 *
 	 * @return mixed
 	 */
 	public function getId()
@@ -63,6 +111,8 @@ class Country {
 	}
 
 	/**
+	 * Set the country id.
+	 *
 	 * @param mixed $id
 	 */
 	public function setId($id)
@@ -70,6 +120,11 @@ class Country {
 		$this->id = $id;
 	}
 
+	/**
+	 * Get the list of web services.
+	 *
+	 * @return array
+	 */
 	public function getWebServices()
 	{
 		$webservices = $this->webServices;
@@ -90,6 +145,8 @@ class Country {
 	}
 
 	/**
+	 * Set the preferred web service.
+	 *
 	 * @param mixed $preferredWebService
 	 */
 	public function setPreferredWebService($preferredWebService)
@@ -139,6 +196,8 @@ class Country {
 	}
 
 	/**
+	 * Set the list of web services.
+	 * 
 	 * @param $webServices
 	 */
 	public function setWebServices($webServices)
