@@ -28,7 +28,7 @@
         "psr-4": {
             "PragmaRX\\ZIPcode\\": "src/"
         }
-    }
+    },
 
     "extra": {
         "component": "package",
