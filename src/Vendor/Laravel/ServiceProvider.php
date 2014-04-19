@@ -22,6 +22,7 @@
 namespace PragmaRX\ZIPcode\Vendor\Laravel;
 
 use PragmaRX\ZIPcode\ZIPcode;
+use PragmaRX\ZIPcode\Support\Http;
 
 use PragmaRX\Support\Config;
 use PragmaRX\Support\Filesystem;
@@ -102,9 +103,19 @@ class ServiceProvider extends PragmaRXServiceProvider {
 	{
 		$this->app['zipcode'] = $this->app->share(function($app)
 		{
-			return new ZIPcode(
-				new Http
-			);
+			$z = new ZIPcode(new Http);
+
+			if ($this->getConfig('country_id'))
+			{
+				$z->setCountry($this->getConfig('country_id'));
+			}
+
+			if ($this->getConfig('preferred_web_service'))
+			{
+				$z->setPreferredWebService($this->getConfig('preferred_web_service'));
+			}
+
+			return $z;
 		});
 	}
 

@@ -20,82 +20,12 @@
 
 return array(
 
-    'create_firewall_alias' => true,
+    'create_zipcode_alias' => true,
 
-    'firewall_alias' => 'Firewall',
+    'zipcode_alias' => 'ZIPcode',
 
-    /*
-    |--------------------------------------------------------------------------
-    | Code and message for blocked responses
-    |--------------------------------------------------------------------------
-    |
-    */
+	'country_id' => 'CA',
 
-    'block_response_code' => 403,
-
-    'block_response_message' => null,
-
-    /*
-    |--------------------------------------------------------------------------
-    | Do you wish to redirect non whitelisted accesses to an error page?
-    |--------------------------------------------------------------------------
-    |
-    */
-
-    'redirect_non_whitelisted_to' => null,
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | How long should we keep IP addresses in cache?
-    |--------------------------------------------------------------------------
-    |
-    */
-
-    'cache_expire_time' => 2, // minutes
-
-    /*
-    |--------------------------------------------------------------------------
-    | Send suspicious events to log?
-    |--------------------------------------------------------------------------
-    |
-    */
-
-    'enable_log' => true,
-
-    /*
-    |--------------------------------------------------------------------------
-    | Which PHP Framework is your application using?
-    |--------------------------------------------------------------------------
-    |
-    |   Supported: "laravel", "none"
-    |   
-    */
-
-    'framework' => 'laravel',
-
-    /*
-    |--------------------------------------------------------------------------
-    | Default Database Driver
-    |--------------------------------------------------------------------------
-    |
-    | This option controls the database driver that will be utilized.
-    |
-    |
-    */
-
-    'driver' => 'eloquent',
-
-    /*
-    |--------------------------------------------------------------------------
-    | Models
-    |--------------------------------------------------------------------------
-    |
-    | When using the "eloquent" driver, we need to know which Eloquent models 
-    | should be used.
-    |
-    */
-
-    'firewall_model' => 'PragmaRX\Firewall\Vendor\Laravel\Models\Firewall',
+	'preferred_web_service' => null,
 
 );
