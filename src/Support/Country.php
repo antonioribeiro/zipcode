@@ -50,6 +50,14 @@ class Country {
 	}
 
 	/**
+	 * @param mixed $zipLength
+	 */
+	public function setZipLength($zipLength)
+	{
+		$this->zipLength = $zipLength;
+	}
+
+	/**
 	 * Zip length getter.
 	 *
 	 * @return mixed

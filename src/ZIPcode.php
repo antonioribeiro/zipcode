@@ -2,9 +2,9 @@
 
 namespace PragmaRX\ZIPcode;
 
-use PragmaRX\ZIPcode\Exceptions\InvalidZipCode;
 use PragmaRX\ZIPcode\Exceptions\WebServicesNotFound;
 use PragmaRX\ZIPcode\Support\Http;
+use PragmaRX\ZIPcode\Support\Zip;
 use PragmaRX\ZIPcode\Support\Result;
 use PragmaRX\ZIPcode\Support\Country;
 use PragmaRX\ZIPcode\Support\WebService;
@@ -68,6 +68,8 @@ class ZIPcode
 
 		$this->country = new Country();
 
+		$this->zip = new Zip($this->country);
+
 		$this->setCountry('BR');
 	}
 
@@ -81,27 +83,9 @@ class ZIPcode
 	{
 		$this->clearErrors();
 
-		$this->zip = $this->validateZip($zip);
+		$this->zip->setCode($zip);
 	}
 
-	/**
-	 * Zip validator.
-	 *
-	 * @param $zip
-	 * @throws Exceptions\InvalidZipCode
-	 * @return bool
-	 */
-	public function validateZip($zip)
-	{
-		$zip = $this->clearZip($zip);
-
-		if ($this->getZipLength() && strlen($zip) !== $this->getZipLength())
-		{
-			throw new InvalidZipCode;
-		}
-
-		return $zip;
-	}
 
 	/**
 	 * Check if at least one web service is up.
@@ -185,7 +169,7 @@ class ZIPcode
 	 */
 	public function gatherInformationFromZip($zip, $webService)
 	{
-		$url = $this->buildUrl($zip, $webService->getUrl(), $webService->getQuery(), $webService->getZipFormat());
+		$url = $this->buildUrl($webService);
 
 		if ($result = $this->http->consume($url))
 		{
@@ -201,17 +185,6 @@ class ZIPcode
 		}
 
 		return $result;
-	}
-
-	/**
-	 * Clear a zip string.
-	 *
-	 * @param $zip
-	 * @return mixed
-	 */
-	public function clearZip($zip)
-	{
-		return $zip = preg_replace("/[^0-9A-Za-z]/", "", $zip);
 	}
 
 	/**
@@ -246,21 +219,21 @@ class ZIPcode
 	 */
 	public function getZip()
 	{
-		return $this->zip;
+		return $this->zip->getCode();
 	}
 
 	/**
 	 * Build a web service url.
 	 *
-	 * @param $zip
-	 * @param $url
-	 * @param $query
-	 * @param $format
+	 * @param $webService
 	 * @return string
 	 */
-	private function buildUrl($zip, $url, $query, $format)
+	private function buildUrl($webService)
 	{
-		return sprintf("$url$query", $this->formatZip($this->clearZip($zip), $format));
+		return sprintf(
+			$webService->getUrl().$webService->getQuery(),
+			$this->zip->format($webService->getZipFormat())
+		);
 	}
 
 	/**
@@ -293,6 +266,8 @@ class ZIPcode
 		{
 			if ($originalName)
 			{
+				$field = is_numeric($field) ? $originalName : $field;
+
 				$value = array_get($result, $originalName);
 
 				$array[$field] = $value;
@@ -418,18 +393,6 @@ class ZIPcode
 	}
 
 	/**
-	 * Format a zip string.
-	 *
-	 * @param $zip
-	 * @param $format
-	 * @return string
-	 */
-	public function formatZip($zip, $format)
-	{
-		return format_masked($this->clearZip($zip), $format);
-	}
-
-	/**
 	 * Country getter.
 	 *
 	 * @return string
@@ -456,7 +419,7 @@ class ZIPcode
 	 *
 	 * @return mixed
 	 */
-	private function getZipLength()
+	public function getZipLength()
 	{
 		return $this->country->getZipLength();
 	}

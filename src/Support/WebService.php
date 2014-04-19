@@ -41,6 +41,13 @@ class WebService {
 	private $fields;
 
 	/**
+	 * The mandatory fields.
+	 *
+	 * @var
+	 */
+	private $mandatoryFields;
+
+	/**
 	 * The fields that will always be present.
 	 *
 	 * @var array
@@ -157,4 +164,23 @@ class WebService {
 	{
 		return in_array($field, $this->mandatoryFields);
 	}
+
+	/**
+	 * @return array
+	 */
+	public function getFixedFields()
+	{
+		return $this->fixedFields;
+	}
+
+	/**
+	 * Get the list of mandatory fields.
+	 *
+	 * @return mixed
+	 */
+	public function getMandatoryFields()
+	{
+		return $this->mandatoryFields;
+	}
+
 }

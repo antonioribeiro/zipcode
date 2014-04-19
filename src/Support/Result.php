@@ -30,7 +30,9 @@ class Result {
 
 		foreach($fields as $field => $relation)
 		{
-			$this->{$field} = isset($address[$field]) ? $address[$field] : null;
+			$fieldName = is_numeric($field) ? $relation : $field;
+
+			$this->{$fieldName} = isset($address[$fieldName]) ? $address[$fieldName] : null;
 		}
 
 		return $this;
