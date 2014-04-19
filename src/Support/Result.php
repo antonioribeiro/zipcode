@@ -56,9 +56,23 @@ class Result {
 
 	private function dropProperties()
 	{
-		foreach(get_object_vars($this) as $name => $property)
+		foreach(get_object_vars($this) as $property => $value)
 		{
-			unset($this->{$name});
+			unset($this->{$property});
 		}
 	}
+
+	public function isEmpty()
+	{
+		foreach(get_object_vars($this) as $property => $value)
+		{
+			if (! empty($value))
+			{
+				return false;
+			}
+		}
+
+		return true;
+	}
+
 }

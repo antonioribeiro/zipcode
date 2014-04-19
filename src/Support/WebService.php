@@ -5,22 +5,57 @@ namespace PragmaRX\ZIPcode\Support;
 
 class WebService {
 
+	/**
+	 * The web service name.
+	 *
+	 * @var
+	 */
 	private $name;
 
+	/**
+	 * The url.
+	 *
+	 * @var
+	 */
 	private $url;
 
+	/**
+	 * The query string part of the url.
+	 *
+	 * @var
+	 */
 	private $query;
 
+	/**
+	 * The zip format allowed by this webservice.
+	 *
+	 * @var
+	 */
 	private $zipFormat;
 
+	/**
+	 * The fields this web service should return.
+	 *
+	 * @var
+	 */
 	private $fields;
 
+	/**
+	 * The fields that will always be present.
+	 *
+	 * @var array
+	 */
 	private $fixedFields = [
 		'zip',
 		'web_service',
 		'country_id',
 	];
 
+	/**
+	 * Create a WebService.
+	 *
+	 * @param null $service
+	 */
 	public function __construct($service = null)
 	{
 		if ($service)
@@ -29,6 +64,11 @@ class WebService {
 		}
 	}
 
+	/**
+	 * Parse an array of data belonging to create a web service.
+	 *
+	 * @param $webService
+	 */
 	public function parse($webService)
 	{
 		$this->name = $webService['name'];
@@ -40,9 +80,13 @@ class WebService {
 		$this->zipFormat = $webService['zip_format'];
 
 		$this->fields = $webService['fields'];
+
+		$this->mandatoryFields = isset($webService['mandatory_fields']) ? $webService['mandatory_fields'] : [];
 	}
 
 	/**
+	 * Fields getter.
+	 *
 	 * @return mixed
 	 */
 	public function getFields()
@@ -51,6 +95,8 @@ class WebService {
 	}
 
 	/**
+	 * Name getter.
+	 *
 	 * @return mixed
 	 */
 	public function getName()
@@ -59,6 +105,8 @@ class WebService {
 	}
 
 	/**
+	 * Query getter.
+	 *
 	 * @return mixed
 	 */
 	public function getQuery()
@@ -67,6 +115,8 @@ class WebService {
 	}
 
 	/**
+	 * Url getter.
+	 *
 	 * @return mixed
 	 */
 	public function getUrl()
@@ -75,6 +125,8 @@ class WebService {
 	}
 
 	/**
+	 * Zip format getter.
+	 *
 	 * @return mixed
 	 */
 	public function getZipFormat()
@@ -82,10 +134,27 @@ class WebService {
 		return $this->zipFormat;
 	}
 
+	/**
+	 * Get a field.
+	 *
+	 * @param $field
+	 * @return null
+	 */
 	public function getField($field)
 	{
 		return isset($this->fields[$field])
 				? $this->fields[$field]
 				: null;
+	}
+
+	/**
+	 * Check if a field is mandatory.
+	 *
+	 * @param $field
+	 * @return bool
+	 */
+	public function isMandatory($field)
+	{
+		return in_array($field, $this->mandatoryFields);
 	}
 }

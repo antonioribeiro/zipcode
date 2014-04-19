@@ -37,6 +37,11 @@ class ZIPCodeSpec extends ObjectBehavior
 					'neighborhood' => 'bairro',
 					'street_kind' => 'tipo_logradouro',
 					'street_name' => 'logradouro',
+					'missing_field' => 'whatever',
+				],
+
+				'mandatory_fields' => [
+					'state_id'
 				],
 			],
 		],
@@ -63,6 +68,8 @@ class ZIPCodeSpec extends ObjectBehavior
 		'country_id' => 'BR',
 		'web_service' => 'testwebService',
 	];
+
+	private $missingFieldError = ["Result field 'missing_field' was not found."];
 
 	public function let(Http $http)
 	{
@@ -119,7 +126,7 @@ class ZIPCodeSpec extends ObjectBehavior
 
 		$http->consume('testwebService')->willReturn($this->resultExample);
 
-		$this->findZip('20250030')->shouldHaveType('PragmaRX\ZIPcode\Support\Result');
+		$this->find('20250030')->shouldHaveType('PragmaRX\ZIPcode\Support\Result');
 	}
 
 	public function it_can_change_a_country_and_load_webservices()
@@ -150,7 +157,7 @@ class ZIPCodeSpec extends ObjectBehavior
 
 		$http->consume('testwebService')->willReturn($this->resultExample);
 
-		$this->findZip('20250030');
+		$this->find('20250030');
 
 		$this->getZip()->shouldBe('20250030');
 	}
@@ -161,9 +168,9 @@ class ZIPCodeSpec extends ObjectBehavior
 
 		$http->consume('testwebService')->willReturn($this->resultExample);
 
-		$this->findZip('20250030');
+		$this->find('20250030');
 
-		$this->getErrors()->shouldHaveCount(0);
+		$this->getErrors()->shouldBe($this->missingFieldError);
 	}
 
 	public function it_successfully_clear_webservices_list()
@@ -242,7 +249,7 @@ class ZIPCodeSpec extends ObjectBehavior
 
 		$http->consume('testwebService')->willReturn($this->resultExample);
 
-		$this->findZip('20250030', 'testwebService')->shouldHaveType('PragmaRX\ZIPcode\Support\Result');
+		$this->find('20250030', 'testwebService')->shouldHaveType('PragmaRX\ZIPcode\Support\Result');
 	}
 
 	public function it_can_find_zip_on_specific_web_service($http)
@@ -251,7 +258,27 @@ class ZIPCodeSpec extends ObjectBehavior
 
 		$http->consume('testwebService')->willReturn($this->resultExample);
 
-		$this->findZip('20250030', $this->getWebServiceByName('testwebService'))->shouldHaveType('PragmaRX\ZIPcode\Support\Result');
+		$this->find('20250030', $this->getWebServiceByName('testwebService'))->shouldHaveType('PragmaRX\ZIPcode\Support\Result');
+	}
+
+	public function it_returns_non_empty_result($http)
+	{
+		$this->getCountry()->setCountryData($this->webServicesExample);
+
+		$http->consume('testwebService')->willReturn($this->resultExample);
+
+		$this->find('20250030', $this->getWebServiceByName('testwebService'))->isEmpty()->shouldBe(false);
+	}
+
+	public function it_returns_empty_result_on_missing_mandatory_fields($http)
+	{
+		unset($this->resultExample['uf']);
+
+		$this->getCountry()->setCountryData($this->webServicesExample);
+
+		$http->consume('testwebService')->willReturn($this->resultExample);
+
+		$this->find('20250030', $this->getWebServiceByName('testwebService'))->isEmpty()->shouldBe(true);
 	}
 
 }

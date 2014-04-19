@@ -150,7 +150,7 @@ class ZIPcode
 	 * @param null $webService
 	 * @return bool|void
 	 */
-	public function findZip($zip, $webService = null)
+	public function find($zip, $webService = null)
 	{
 		if ( ! $webService)
 		{
@@ -167,9 +167,9 @@ class ZIPcode
 			return $this->searchZipUsingWebService($zip, $webService);
 		}
 
-		$this->addError('There are no webServices available.');
+		$this->addError('No webServices provided information about this zip code.');
 
-		return false;
+		return new $this->result;
 	}
 
 	/**
@@ -233,12 +233,10 @@ class ZIPcode
 	 */
 	public function setResult($result, $webService)
 	{
-		if ( ! $result = $this->extractResultFields($result, $webService))
-		{
-			return false;
-		}
-
-		return $this->result->parse($result, $webService->getFields());
+		return $this->result->parse(
+			$this->extractResultFields($result, $webService),
+			$webService->getFields()
+		);
 	}
 
 	/**
@@ -284,12 +282,12 @@ class ZIPcode
 	 */
 	private function extractResultFields($result, $webService)
 	{
+		$array = [];
+
 		if ( ! $this->isValidResult($result, $webService))
 		{
-			return false;
+			return $array;
 		}
-
-		$array = [];
 
 		foreach($webService->getFields() as $field => $originalName)
 		{
@@ -313,7 +311,8 @@ class ZIPcode
 	 */
 	private function isValidResult($result, $webService)
 	{
-		$valid = true;
+		$valid = 0;
+		$missingMandatory = false;
 
 		foreach($webService->getFields() as $field => $originalName)
 		{
@@ -323,17 +322,26 @@ class ZIPcode
 				{
 					$has = array_get($result, $originalName);
 
-					$valid = $valid && $has;
+					$valid += $has ? 1 : 0;
 
 					if ( ! $has)
 					{
-						$this->addError("Result field '$field' was not found.");
+						if ($webService->isMandatory($field))
+						{
+							$missingMandatory = true;
+
+							$this->addError("Mandatory field '$field' is missing from result.");
+						}
+						else
+						{
+							$this->addError("Result field '$field' was not found.");
+						}
 					}
 				}
 			}
 		}
 
-		if ($valid)
+		if ($valid > 0)
 		{
 			foreach($webService as $key => $field)
 			{
@@ -349,12 +357,14 @@ class ZIPcode
 			}
 		}
 
-		if ( ! $valid)
+		if ($valid == 0 || $missingMandatory)
 		{
 			$this->addError('Result is not valid.');
+
+			return false;
 		}
 
-		return $valid;
+		return true;
 	}
 
 	/**
@@ -535,5 +545,15 @@ class ZIPcode
 	public function clearWebServicesList()
 	{
 		$this->country->getWebServices()->clearWebServicesList();
+	}
+
+	/**
+	 * Check if there are errors.
+	 *
+	 * @return bool
+	 */
+	public function hasErrors()
+	{
+		return count($this->errors) > 0;
 	}
 }

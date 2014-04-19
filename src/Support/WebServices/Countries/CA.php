@@ -30,6 +30,11 @@ return [
 				'longitude' => 'latt',
 				'latitude' => 'longt',
 			],
+
+			'mandatory_fields' => [
+				'city',
+				'state_id',
+			]
 		],
 
 	],
