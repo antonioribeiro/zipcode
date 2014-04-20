@@ -2,6 +2,8 @@
 
 namespace PragmaRX\ZIPcode\Support;
 
+use PragmaRX\ZIPcode\Exceptions\PropertyDoesNotExists;
+
 class Result {
 
 	public function __construct($address = null, $fields = null)
@@ -77,4 +79,36 @@ class Result {
 		return true;
 	}
 
+	/**
+	 * Provides dynamic calls.
+	 *
+	 * @param $name
+	 * @param array $arguments
+	 * @throws \PragmaRX\ZIPcode\Exceptions\PropertyDoesNotExists
+	 * @return mixed
+	 */
+	public function __call($name, array $arguments)
+	{
+		if (substr($name, 0, 3) == 'get')
+		{
+			$property = substr($name, 3);
+
+			$possibleNames = [
+				$property,
+				snake($property),
+				studly($property),
+				camel($property),
+			];
+
+			foreach ($possibleNames as $name)
+			{
+				if (isset($this->{$name}))
+				{
+					return $this->{$name};
+				}
+			}
+		}
+
+		throw new PropertyDoesNotExists("Property '$name' does not exists in Result object.");
+	}
 }
