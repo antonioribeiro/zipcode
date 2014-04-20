@@ -2,46 +2,20 @@
 
 namespace spec\PragmaRX\ZIPcode\Support;
 
-use PragmaRX\ZIPcode\Support\Country;
-
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
+use Data;
+
 class WebServiceSpec extends ObjectBehavior
 {
-
-	private $webservice = [
-		'name' => 'testwebService',
-
-		'url' => 'testwebService',
-
-		'query' => '',
-
-		'result_type' => 'json',
-
-		'zip_format' => '99999999',
-
-		'_check_resultado' => '1',
-
-		'fields' => [
-			'zip' => 'zip',
-			'state_id' => 'uf',
-			'state_name' => null,
-			'city' => 'cidade',
-			'neighborhood' => 'bairro',
-			'street_kind' => 'tipo_logradouro',
-			'street_name' => 'logradouro',
-			'missing_field' => 'whatever',
-		],
-
-		'mandatory_fields' => [
-			'state_id'
-		],
-	];
+	private $data;
 
 	public function let()
 	{
-		$this->beConstructedWith($this->webservice);
+		$this->data = new Data;
+
+		$this->beConstructedWith($this->data->webService);
 	}
 
 	public function it_is_initializable()
@@ -61,12 +35,12 @@ class WebServiceSpec extends ObjectBehavior
 	}
 	public function it_can_get_all_properties()
 	{
-		$this->getName()->shouldBe($this->webservice['name']);
-		$this->getUrl()->shouldBe($this->webservice['url']);
-		$this->getQuery()->shouldBe($this->webservice['query']);
-		$this->getZipFormat()->shouldBe($this->webservice['zip_format']);
-		$this->getFields()->shouldBe(array_merge($this->webservice['fields'], ['zip','web_service','country_id']));
-		$this->getMandatoryFields()->shouldBe($this->webservice['mandatory_fields']);
+		$this->getName()->shouldBe($this->data->webService['name']);
+		$this->getUrl()->shouldBe($this->data->webService['url']);
+		$this->getQuery()->shouldBe($this->data->webService['query']);
+		$this->getZipFormat()->shouldBe($this->data->webService['zip_format']);
+		$this->getFields()->shouldBe(array_merge($this->data->webService['fields'], ['zip','web_service','country_id']));
+		$this->getMandatoryFields()->shouldBe($this->data->webService['mandatory_fields']);
 	}
 
 	public function it_can_check_if_a_field_is_mandatory()

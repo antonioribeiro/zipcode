@@ -86,7 +86,6 @@ class ZIPcode
 		$this->zip->setCode($zip);
 	}
 
-
 	/**
 	 * Check if at least one web service is up.
 	 *
@@ -148,7 +147,10 @@ class ZIPcode
 		}
 		else
 		{
-			return $this->searchZipUsingWebService($zip, $webService);
+			if ($result = $this->searchZipUsingWebService($zip, $webService))
+			{
+				return $result;
+			}
 		}
 
 		$this->addError('No webServices provided information about this zip code.');
@@ -206,10 +208,14 @@ class ZIPcode
 	 */
 	public function setResult($result, $webService)
 	{
-		return $this->result->parse(
-			$this->extractResultFields($result, $webService),
-			$webService->getFields()
+		$result = $this->result->parse(
+			$result,
+			$webService
 		);
+
+		$this->addErrors($this->result->getErrors());
+
+		return $result;
 	}
 
 	/**
@@ -244,102 +250,6 @@ class ZIPcode
 	public function getErrors()
 	{
 		return $this->errors;
-	}
-
-	/**
-	 * Extract all fields result from a result.
-	 *
-	 * @param $result
-	 * @param $webService
-	 * @return array|bool
-	 */
-	private function extractResultFields($result, $webService)
-	{
-		$array = [];
-
-		if ( ! $this->isValidResult($result, $webService))
-		{
-			return $array;
-		}
-
-		foreach($webService->getFields() as $field => $originalName)
-		{
-			if ($originalName)
-			{
-				$field = is_numeric($field) ? $originalName : $field;
-
-				$value = array_get($result, $originalName);
-
-				$array[$field] = $value;
-			}
-		}
-
-		return $array;
-	}
-
-	/**
-	 * Check if an result is valid.
-	 *
-	 * @param $result
-	 * @param $webService
-	 * @return bool
-	 */
-	private function isValidResult($result, $webService)
-	{
-		$valid = 0;
-		$missingMandatory = false;
-
-		foreach($webService->getFields() as $field => $originalName)
-		{
-			if ($originalName)
-			{
-				if ($webService->getField($field))
-				{
-					$has = array_get($result, $originalName);
-
-					$valid += $has ? 1 : 0;
-
-					if ( ! $has)
-					{
-						if ($webService->isMandatory($field))
-						{
-							$missingMandatory = true;
-
-							$this->addError("Mandatory field '$field' is missing from result.");
-						}
-						else
-						{
-							$this->addError("Result field '$field' was not found.");
-						}
-					}
-				}
-			}
-		}
-
-		if ($valid > 0)
-		{
-			foreach($webService as $key => $field)
-			{
-				if (substr($key, 0, 7) == '_check_')
-				{
-					$field = substr($key, 7);
-
-					if ( ! $valid = $valid && $result[$field] == $webService->getField($key))
-					{
-						$this->addError("Verification field $key should be '".$webService->getField($key)."' and is '$result[$field]'.");
-					};
-				}
-			}
-		}
-
-		if ($valid == 0 || $missingMandatory)
-		{
-			$this->addError('Result is not valid.');
-
-			return false;
-		}
-
-		return true;
 	}
 
 	/**
@@ -518,5 +428,15 @@ class ZIPcode
 	public function hasErrors()
 	{
 		return count($this->errors) > 0;
+	}
+
+	/**
+	 * Add a list of errors to the current error list.
+	 *
+	 * @param array $errors
+	 */
+	private function addErrors(array $errors)
+	{
+		$this->errors = array_merge($this->errors, $errors);
 	}
 }

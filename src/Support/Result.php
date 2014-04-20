@@ -6,6 +6,26 @@ use PragmaRX\ZIPcode\Exceptions\PropertyDoesNotExists;
 
 class Result {
 
+	/**
+	 * The list of errors.
+	 *
+	 * @var array
+	 */
+	private $errors = [];
+
+	/**
+	 * All public properties.
+	 *
+	 * @var array
+	 */
+	private $publicProperties = [];
+
+	/**
+	 * Create a result.
+	 *
+	 * @param null $address
+	 * @param null $fields
+	 */
 	public function __construct($address = null, $fields = null)
 	{
 		if ($address)
@@ -17,38 +37,47 @@ class Result {
 	/**
 	 * Parse an array of fields to result properties.
 	 *
-	 * @param array $address
-	 * @param $fields
-	 * @return $this
+	 * @param array $result
+	 * @param WebService $webService
+	 * @return bool
 	 */
-	public function parse(array $address, $fields)
+	public function parse(array $result, WebService $webService)
 	{
-		$this->dropProperties();
+		$this->clearProperties();
+		$this->clearErrors();
 
-		if ($address instanceof Address)
+		if ( ! $this->validate($result, $webService))
 		{
-			$address = $address->toArray();
+			return false;
 		}
 
-		foreach($fields as $field => $relation)
+		foreach($webService->getFields() as $property => $nameInResultSet)
 		{
-			$fieldName = is_numeric($field) ? $relation : $field;
+			$property = is_numeric($property) ? $nameInResultSet : $property;
 
-			$this->{$fieldName} = isset($address[$fieldName]) ? $address[$fieldName] : null;
+			$this->publicProperties[$property] = isset($result[$nameInResultSet])
+													? $result[$nameInResultSet]
+													: ( isset($this->publicProperties[$property])
+														? $this->publicProperties[$property]
+														: null );
 		}
 
-		return $this;
+		return true;
 	}
 
 	/**
+	 * Convert to array.
+	 *
 	 * @return array
 	 */
 	public function toArray()
 	{
-		return (array) $this;
+		return $this->publicProperties;
 	}
 
 	/**
+	 * Convert to json.
+	 *
 	 * @return string
 	 */
 	public function toJson()
@@ -58,17 +87,21 @@ class Result {
 		);
 	}
 
-	private function dropProperties()
+	/**
+	 * Clear the list of propperties.
+	 *
+	 */
+	private function clearProperties()
 	{
-		foreach(get_object_vars($this) as $property => $value)
-		{
-			unset($this->{$property});
-		}
+		$this->publicProperties = [];
 	}
 
+	/**
+	 * @return bool
+	 */
 	public function isEmpty()
 	{
-		foreach(get_object_vars($this) as $property => $value)
+		foreach($this->toArray() as $value)
 		{
 			if (! empty($value))
 			{
@@ -102,13 +135,108 @@ class Result {
 
 			foreach ($possibleNames as $name)
 			{
-				if (isset($this->{$name}))
+				if (isset($this->publicProperties[$name]))
 				{
-					return $this->{$name};
+					return $this->publicProperties[$name];
 				}
 			}
 		}
 
 		throw new PropertyDoesNotExists("Property '$name' does not exists in Result object.");
 	}
+
+	/**
+	 * Check if an result is valid.
+	 *
+	 * @param $result
+	 * @param $webService
+	 * @return bool
+	 */
+	private function validate($result, WebService $webService)
+	{
+		$valid = 0;
+		$missingMandatory = false;
+
+		foreach($webService->getFields() as $field => $originalName)
+		{
+			if ($originalName)
+			{
+				if ($webService->getField($field))
+				{
+					$has = array_get($result, $originalName);
+
+					$valid += $has ? 1 : 0;
+
+					if ( ! $has)
+					{
+						if ($webService->isMandatory($field))
+						{
+							$missingMandatory = true;
+
+							$this->addError("Mandatory field '$field' is missing from result.");
+						}
+						else
+						{
+							$this->addError("Result field '$field' was not found.");
+						}
+					}
+				}
+			}
+		}
+
+		if ($valid > 0)
+		{
+			foreach($webService as $key => $field)
+			{
+				if (substr($key, 0, 7) == '_check_')
+				{
+					$field = substr($key, 7);
+
+					if ( ! $valid = $valid && $result[$field] == $webService->getField($key))
+					{
+						$this->addError("Verification field $key should be '".$webService->getField($key)."' and is '$result[$field]'.");
+					};
+				}
+			}
+		}
+
+		if ($valid == 0 || $missingMandatory)
+		{
+			$this->addError('Result is not valid.');
+
+			return false;
+		}
+
+		return true;
+	}
+
+	/**
+	 * Get the list of errors.
+	 *
+	 * @return mixed
+	 */
+	public function getErrors()
+	{
+		return $this->errors;
+	}
+
+	/**
+	 * Clear the list of errors.
+	 *
+	 */
+	public function clearErrors()
+	{
+		$this->errors = [];
+	}
+
+	/**
+	 * Add an error to the list.
+	 *
+	 * @param $error
+	 */
+	public function addError($error)
+	{
+		$this->errors[] = $error;
+	}
+
 }

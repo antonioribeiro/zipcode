@@ -2,45 +2,23 @@
 
 namespace spec\PragmaRX\ZIPcode\Support;
 
+require __DIR__.'/../Data.php';
+
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
+use Data;
+
 class CountrySpec extends ObjectBehavior
 {
+	private $data;
 
-	private $countryData = [
+	public function let()
+	{
+		$this->data = new Data;
+	}
 
-		'zip_length' => 8,
-
-		'web_services' => [
-			[
-				'name' => 'testwebService',
-
-				'url' => 'testwebService',
-
-				'query' => '',
-
-				'result_type' => 'json',
-
-				'zip_format' => '99999999',
-
-				'_check_resultado' => '1',
-
-				'fields' => [
-					'zip' => 'zip',
-					'state_id' => 'uf',
-					'state_name' => null,
-					'city' => 'cidade',
-					'neighborhood' => 'bairro',
-					'street_kind' => 'tipo_logradouro',
-					'street_name' => 'logradouro',
-				],
-			],
-		],
-
-	];
-
-    public function it_is_initializable()
+	public function it_is_initializable()
     {
         $this->shouldHaveType('PragmaRX\ZIPcode\Support\Country');
     }
@@ -54,19 +32,19 @@ class CountrySpec extends ObjectBehavior
 
 	public function it_can_import_country_data()
 	{
-		$this->setCountryData($this->countryData);
+		$this->setCountryData($this->data->countryArray);
 	}
 
 	public function it_can_import_zip_length_from_country_data()
 	{
-		$this->setCountryData($this->countryData);
+		$this->setCountryData($this->data->countryArray);
 
 		$this->getZipLength()->shouldBe(8);
 	}
 
 	public function it_can_get_web_services_from_imported_data()
 	{
-		$this->setCountryData($this->countryData);
+		$this->setCountryData($this->data->countryArray);
 
 		$this->getWebServices()->shouldHaveType('PragmaRX\ZIPcode\Support\WebServices');
 	}

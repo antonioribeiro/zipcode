@@ -5,33 +5,16 @@ namespace spec\PragmaRX\ZIPcode\Support;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
+use Data;
+
 class WebServicesSpec extends ObjectBehavior
 {
-	private $webServicesExample = [
-		[
-			'name' => 'testwebService',
+	private $data;
 
-			'url' => 'testwebService',
-
-			'query' => '',
-
-			'result_type' => 'json',
-
-			'zip_format' => '99999999',
-
-			'_check_resultado' => '1',
-
-			'fields' => [
-				'zip' => 'zip',
-				'state_id' => 'uf',
-				'state_name' => null,
-				'city' => 'cidade',
-				'neighborhood' => 'bairro',
-				'street_kind' => 'tipo_logradouro',
-				'street_name' => 'logradouro',
-			],
-		],
-	];
+	public function let()
+	{
+		$this->data = new Data;
+	}
 
 	public function it_is_initializable()
 	{
@@ -68,14 +51,14 @@ class WebServicesSpec extends ObjectBehavior
 
 	public function it_can_find_a_webservice_by_name()
 	{
-		$this->setWebServices($this->webServicesExample);
+		$this->setWebServices($this->data->countryArray['web_services']);
 
 		$this->getWebServiceByName('testwebService')->shouldHaveType('PragmaRX\ZIPcode\Support\WebService');
 	}
 
 	public function it_throws_when_web_service_name_is_not_found()
 	{
-		$this->setWebServices($this->webServicesExample);
+		$this->setWebServices($this->data->countryArray['web_services']);
 
 		$this->shouldThrow('PragmaRX\ZIPcode\Exceptions\WebServicesNotFound')->duringGetWebServiceByName('impossibleWebServiceName');
 	}
