@@ -5,7 +5,8 @@ namespace PragmaRX\ZIPcode\Support;
 use GuzzleHttp\Client as Guzzle;
 use GuzzleHttp\Exception\RequestException;
 
-class Http {
+class Http implements HttpInterface
+{
 
 	/**
 	 * User agent internal string.
@@ -96,7 +97,7 @@ class Http {
 	 * Creates a Guzzle instance.
 	 *
 	 */
-	private function instantiateGuzzle()
+	public function instantiateGuzzle()
 	{
 		if (isset($this->guzzle))
 		{

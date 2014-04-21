@@ -13,7 +13,6 @@ return [
 			'zip_format' => '99999999',
 			'_check_resultado' => '1',
 			'fields' => [
-				'zip' => 'zip',
 				'state_id' => 'uf',
 				'state_name' => null,
 				'city' => 'cidade',

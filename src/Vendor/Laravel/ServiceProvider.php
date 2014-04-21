@@ -23,11 +23,10 @@ namespace PragmaRX\ZIPcode\Vendor\Laravel;
 
 use PragmaRX\ZIPcode\ZIPcode;
 use PragmaRX\ZIPcode\Support\Http;
+use PragmaRX\ZIPcode\Support\Finder;
 
 use PragmaRX\Support\Config;
 use PragmaRX\Support\Filesystem;
-
-use Symfony\Component\Finder\Finder;
 
 use PragmaRX\Support\ServiceProvider as PragmaRXServiceProvider;
 
@@ -103,7 +102,11 @@ class ServiceProvider extends PragmaRXServiceProvider {
 	{
 		$this->app['zipcode'] = $this->app->share(function($app)
 		{
-			$z = new ZIPcode(new Http);
+			$z = new ZIPcode(
+				new Finder(
+					new Http
+				)
+			);
 
 			if ($this->getConfig('country_id'))
 			{

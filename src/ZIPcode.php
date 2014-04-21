@@ -2,14 +2,14 @@
 
 namespace PragmaRX\ZIPcode;
 
-use PragmaRX\ZIPcode\Exceptions\WebServicesNotFound;
-use PragmaRX\ZIPcode\Support\Http;
+use PragmaRX\ZIPcode\Support\BaseClass;
+use PragmaRX\ZIPcode\Support\Finder;
+use PragmaRX\ZIPcode\Support\FinderInterface;
 use PragmaRX\ZIPcode\Support\Zip;
 use PragmaRX\ZIPcode\Support\Result;
 use PragmaRX\ZIPcode\Support\Country;
-use PragmaRX\ZIPcode\Support\WebService;
 
-class ZIPcode
+class ZIPcode extends BaseClass
 {
 	/**
 	 * The HTTP class.
@@ -19,19 +19,12 @@ class ZIPcode
 	private $http;
 
 	/**
-	 * The list of web services.
-	 *
-	 * @var
-	 */
-	private $webServices;
-
-
-	/**
 	 * The country object, which also holds the related web services.
 	 *
 	 * @var Support\Country
 	 */
 	private $country;
+
 	/**
 	 * The current zip being searched.
 	 *
@@ -47,28 +40,23 @@ class ZIPcode
 	private $result;
 
 	/**
-	 * The list of errors.
-	 *
-	 * @var array
-	 */
-	private $errors = [];
-
-	/**
 	 * The class constructor.
 	 *
-	 * @param Http $http
+	 * @param FinderInterface $finder
 	 */
-	public function __construct(Http $http = null)
+	public function __construct(FinderInterface $finder = null)
 	{
-		$this->http = ! $http
-						? new Http()
-						: $http;
+		$this->finder = ! $finder
+						? new Finder()
+						: $finder;
 
 		$this->result = new Result();
 
 		$this->country = new Country();
 
 		$this->zip = new Zip($this->country);
+
+		$this->finder->setZip($this->zip);
 
 		$this->setCountry('BR');
 	}
@@ -84,26 +72,6 @@ class ZIPcode
 		$this->clearErrors();
 
 		$this->zip->setCode($zip);
-	}
-
-	/**
-	 * Check if at least one web service is up.
-	 *
-	 * @return bool
-	 */
-	public function checkZipWebServices()
-	{
-		foreach($this->getWebServices() as $webService)
-		{
-			if ($this->http->ping($webService->getUrl()))
-			{
-				return true;
-			}
-		}
-
-		$this->addError('No zip webServices are up.');
-
-		return false;
 	}
 
 	/**
@@ -135,87 +103,11 @@ class ZIPcode
 	 */
 	public function find($zip, $webService = null)
 	{
-		if ( ! $webService)
-		{
-			foreach($this->getWebServices() as $webService)
-			{
-				if ($result = $this->searchZipUsingWebService($zip, $webService))
-				{
-					return $this->getResult();
-				}
-			}
-		}
-		else
-		{
-			if ($result = $this->searchZipUsingWebService($zip, $webService))
-			{
-				return $result;
-			}
-		}
+		$this->result = $this->finder->find($zip, $webService);
 
-		$this->addError('No webServices provided information about this zip code.');
+		$this->addErrors($this->finder->getErrors());
 
-		return new $this->result;
-	}
-
-	/**
-	 * Search a zip via HTTP.
-	 *
-	 * @param $zip
-	 * @param $webService
-	 * @throws Exceptions\WebServicesNotFound
-	 * @internal param $url
-	 * @internal param $query
-	 * @internal param $format
-	 * @return array|bool
-	 */
-	public function gatherInformationFromZip($zip, $webService)
-	{
-		$url = $this->buildUrl($webService);
-
-		if ($result = $this->http->consume($url))
-		{
-			$result['zip'] = ! isset($result['zip']) || empty($result['zip'])
-								? $zip
-								: $result['zip'];
-
-			$result['country_id'] = ! isset($result['country_id']) || empty($result['country_id'])
-									? $this->country->getId()
-									: $result['country_id'];
-
-			$result['web_service'] = $webService->getName();
-		}
-
-		return $result;
-	}
-
-	/**
-	 * Result getter.
-	 *
-	 * @return mixed
-	 */
-	public function getResult()
-	{
 		return $this->result;
-	}
-
-	/**
-	 * Result setter.
-	 *
-	 * @param mixed $result
-	 * @param $webService
-	 * @return mixed
-	 */
-	public function setResult($result, $webService)
-	{
-		$result = $this->result->parse(
-			$result,
-			$webService
-		);
-
-		$this->addErrors($this->result->getErrors());
-
-		return $result;
 	}
 
 	/**
@@ -226,80 +118,6 @@ class ZIPcode
 	public function getZip()
 	{
 		return $this->zip->getCode();
-	}
-
-	/**
-	 * Build a web service url.
-	 *
-	 * @param $webService
-	 * @return string
-	 */
-	private function buildUrl($webService)
-	{
-		return sprintf(
-			$webService->getUrl().$webService->getQuery(),
-			$this->zip->format($webService->getZipFormat())
-		);
-	}
-
-	/**
-	 * Errors getter.
-	 *
-	 * @return mixed
-	 */
-	public function getErrors()
-	{
-		return $this->errors;
-	}
-
-	/**
-	 * Add an error to the list of errors.
-	 *
-	 * @param $error
-	 */
-	private function addError($error)
-	{
-		$this->errors[] = $error;
-	}
-
-	/**
-	 * Clear the errors array.
-	 *
-	 */
-	private function clearErrors()
-	{
-		$this->errors = [];
-	}
-
-	/**
-	 * A general search zip by web service method.
-	 *
-	 * @param $zip
-	 * @param $webService
-	 * @throws Exceptions\WebServicesNotFound
-	 * @return bool|mixed
-	 */
-	public function searchZipUsingWebService($zip, $webService)
-	{
-		$this->setZip($zip);
-
-		if ( ! $webService instanceof WebService)
-		{
-			if ( ! $webService = $this->getWebServiceByName($webService))
-			{
-				throw new WebServicesNotFound("No web service found with '$webService'");
-			}
-		}
-
-		if ($result = $this->gatherInformationFromZip($this->getZip(), $webService))
-		{
-			if ($this->setResult($result, $webService))
-			{
-				return $this->getResult();
-			}
-		}
-
-		return false;
 	}
 
 	/**
@@ -320,8 +138,6 @@ class ZIPcode
 	public function setCountry($country)
 	{
 		$this->country->setId($country);
-
-		$this->country->setCountryData($this->loadWebServices($country));
 	}
 
 	/**
@@ -332,32 +148,6 @@ class ZIPcode
 	public function getZipLength()
 	{
 		return $this->country->getZipLength();
-	}
-
-	/**
-	 * Load all web services for a country.
-	 *
-	 * @param $country
-	 * @return mixed
-	 * @throws Exceptions\WebServicesNotFound
-	 */
-	private function loadWebServices($country)
-	{
-		$file = __DIR__."/Support/WebServices/Countries/$country.php";
-
-		if ( ! file_exists($file))
-		{
-			throw new WebServicesNotFound("There are no web services for this country '$country'.", 1);
-		}
-
-		try
-		{
-			return require($file);
-		}
-		catch(\Exception $e)
-		{
-			throw new WebServicesNotFound("Error loading web services for country country '$country': ".$e->getMessage(), 1);
-		}
 	}
 
 	/**
@@ -377,7 +167,7 @@ class ZIPcode
 	 */
 	public function setUserAgent($userAgent)
 	{
-		$this->http->setUserAgent($userAgent);
+		$this->finder->getHttp()->setUserAgent($userAgent);
 	}
 
 	/**
@@ -387,7 +177,7 @@ class ZIPcode
 	 */
 	public function getUserAgent()
 	{
-		return $this->http->getUserAgent();
+		return $this->finder->getHttp()->getUserAgent();
 	}
 
 	/**
@@ -420,23 +210,4 @@ class ZIPcode
 		$this->country->getWebServices()->clearWebServicesList();
 	}
 
-	/**
-	 * Check if there are errors.
-	 *
-	 * @return bool
-	 */
-	public function hasErrors()
-	{
-		return count($this->errors) > 0;
-	}
-
-	/**
-	 * Add a list of errors to the current error list.
-	 *
-	 * @param array $errors
-	 */
-	private function addErrors(array $errors)
-	{
-		$this->errors = array_merge($this->errors, $errors);
-	}
 }

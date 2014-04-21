@@ -2,6 +2,8 @@
 
 class Data {
 
+	public $webService;
+
 	public $numberOfWebServicesAvailable = 5;
 
 	public $missingFieldError = ["Result field 'missing_field' was not found."];
@@ -31,6 +33,7 @@ class Data {
 					'neighborhood' => 'bairro',
 					'street_kind' => 'tipo_logradouro',
 					'street_name' => 'logradouro',
+					'sub_value' => 'sub.value',
 					'missing_field' => 'whatever',
 				],
 
@@ -62,6 +65,7 @@ class Data {
 		'web_service' => 'testwebService',
 		'country_id' => 'BR',
 		'zip' => "20250030",
+		'sub' => ['value' => 'this is the sub value'],
 	];
 
 	public $finalResultArray = [
@@ -72,6 +76,7 @@ class Data {
 		'neighborhood' => 'Estácio',
 		'street_kind' => 'Rua',
 		'street_name' => 'Professor Quintino do Vale',
+		'sub_value' => 'this is the sub value',
 		'missing_field' => null,
 		'web_service' => 'testwebService',
 		'country_id' => 'BR',
@@ -85,14 +90,19 @@ class Data {
 		'bairro' =>  "Estácio",
 		'tipo_logradouro' =>  "Rua",
 		'logradouro' =>  "Professor Quintino do Vale",
+		'sub' => ['value' => 'this is the sub value'],
 		'missing_field' =>  NULL,
 	];
-
-	public $webService;
 
 	public function __construct()
 	{
 		$this->webService = $this->countryArray['web_services'][0];
+
+	    $this->dataArrayWithRaw = $this->dataArray;
+
+		$this->dataArrayWithRaw['result_raw'] = $this->dataArray;
+
+		$this->finalResultArray['result_raw'] = $this->dataArray;
 	}
 
 }

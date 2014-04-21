@@ -14,6 +14,8 @@ class Zip {
 	 */
 	private $code;
 
+	private $country;
+
 	/**
 	 * Create a Zip.
 	 *
@@ -95,6 +97,16 @@ class Zip {
 	public function format($format)
 	{
 		return format_masked($this->getCode(), $format);
+	}
+
+	/**
+	 * Country getter.
+	 *
+	 * @return Country
+	 */
+	public function getCountry()
+	{
+		return $this->country;
 	}
 
 }

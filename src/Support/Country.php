@@ -2,7 +2,7 @@
 
 namespace PragmaRX\ZIPcode\Support;
 
-use PragmaRX\ZIPcode\Support\WebServices;
+use PragmaRX\ZIPcode\Exceptions\WebServicesNotFound;
 
 class Country {
 
@@ -85,6 +85,8 @@ class Country {
 	public function setId($id)
 	{
 		$this->id = $id;
+
+		$this->setCountryData($this->loadWebServices($id));
 	}
 
 	/**
@@ -95,6 +97,32 @@ class Country {
 	public function getWebServices()
 	{
 		return $this->webServices;
+	}
+
+	/**
+	 * Load all web services for a country.
+	 *
+	 * @param $country
+	 * @throws WebServicesNotFound
+	 * @return mixed
+	 */
+	private function loadWebServices($country)
+	{
+		$file = __DIR__."/WebServices/Countries/$country.php";
+
+		if ( ! file_exists($file))
+		{
+			throw new WebServicesNotFound("There are no web services for this country '$country'.", 1);
+		}
+
+		try
+		{
+			return require($file);
+		}
+		catch(\Exception $e)
+		{
+			throw new WebServicesNotFound("Error loading web services for country country '$country': ".$e->getMessage(), 1);
+		}
 	}
 
 }

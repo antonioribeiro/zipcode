@@ -4,14 +4,7 @@ namespace PragmaRX\ZIPcode\Support;
 
 use PragmaRX\ZIPcode\Exceptions\PropertyDoesNotExists;
 
-class Result {
-
-	/**
-	 * The list of errors.
-	 *
-	 * @var array
-	 */
-	private $errors = [];
+class Result extends BaseClass {
 
 	/**
 	 * All public properties.
@@ -53,11 +46,12 @@ class Result {
 
 		foreach($webService->getFields() as $property => $nameInResultSet)
 		{
+			$nameInResultSet = $nameInResultSet ?: $property;
+
 			$property = is_numeric($property) ? $nameInResultSet : $property;
 
-			$this->publicProperties[$property] = isset($result[$nameInResultSet])
-													? $result[$nameInResultSet]
-													: ( isset($this->publicProperties[$property])
+			$this->publicProperties[$property] = array_get($result, $nameInResultSet)
+													?: ( isset($this->publicProperties[$property])
 														? $this->publicProperties[$property]
 														: null );
 		}
@@ -208,35 +202,6 @@ class Result {
 		}
 
 		return true;
-	}
-
-	/**
-	 * Get the list of errors.
-	 *
-	 * @return mixed
-	 */
-	public function getErrors()
-	{
-		return $this->errors;
-	}
-
-	/**
-	 * Clear the list of errors.
-	 *
-	 */
-	public function clearErrors()
-	{
-		$this->errors = [];
-	}
-
-	/**
-	 * Add an error to the list.
-	 *
-	 * @param $error
-	 */
-	public function addError($error)
-	{
-		$this->errors[] = $error;
 	}
 
 }
