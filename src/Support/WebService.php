@@ -56,6 +56,7 @@ class WebService {
 		'zip',
 		'web_service',
 		'country_id',
+		'timer',
 		'result_raw',
 	];
 

@@ -3,6 +3,7 @@
 namespace PragmaRX\ZIPcode\Support;
 
 use PragmaRX\ZIPcode\Exceptions\WebServicesNotFound;
+use PragmaRX\Support\Timer;
 
 class Finder extends BaseClass implements FinderInterface {
 
@@ -10,11 +11,15 @@ class Finder extends BaseClass implements FinderInterface {
 
 	private $http;
 
-	public function __construct(HttpInterface $http = null)
+	public function __construct(HttpInterface $http = null, Timer $timer = null)
 	{
 		$this->http = ! $http
 						? new Http()
 						: $http;
+
+		$this->timer = ! $timer
+						? new Timer()
+						: $timer;
 
 		$this->result = new Result();
 	}
@@ -85,6 +90,8 @@ class Finder extends BaseClass implements FinderInterface {
 	{
 		$url = $this->buildUrl($webService);
 
+		$t = (new Timer)->start();
+
 		if ($result = $this->http->consume($url))
 		{
 			$result['result_raw'] = $result;
@@ -98,6 +105,8 @@ class Finder extends BaseClass implements FinderInterface {
 				: $result['country_id'];
 
 			$result['web_service'] = $webService->getName();
+
+			$result['timer'] = $t->elapsed();
 		}
 
 		return $result;

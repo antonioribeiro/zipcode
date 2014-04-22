@@ -31,6 +31,7 @@ class WebServiceSpec extends ObjectBehavior
 			'zip',
 			'web_service',
 			'country_id',
+			'timer',
 			'result_raw',
 		]);
 	}
@@ -40,7 +41,7 @@ class WebServiceSpec extends ObjectBehavior
 		$this->getUrl()->shouldBe($this->data->webService['url']);
 		$this->getQuery()->shouldBe($this->data->webService['query']);
 		$this->getZipFormat()->shouldBe($this->data->webService['zip_format']);
-		$this->getFields()->shouldBe(array_merge($this->data->webService['fields'], ['zip','web_service','country_id', 'result_raw']));
+		$this->getFields()->shouldBe(array_merge($this->data->webService['fields'], ['zip','web_service','country_id', 'timer', 'result_raw']));
 		$this->getMandatoryFields()->shouldBe($this->data->webService['mandatory_fields']);
 	}
 

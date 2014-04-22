@@ -6,6 +6,8 @@ use PragmaRX\ZIPcode\Support\Country;
 use PragmaRX\ZIPcode\Support\Http;
 use PragmaRX\ZIPcode\Support\Zip;
 
+use PragmaRX\Support\Timer;
+
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
@@ -15,11 +17,11 @@ class FinderSpec extends ObjectBehavior
 {
 	private $data;
 
-	public function let(Http $http)
+	public function let(Http $http, Timer $timer)
 	{
 		$this->data = new Data;
 
-		$this->beConstructedWith($http);
+		$this->beConstructedWith($http, $timer);
 
 		$country = new Country();
 
@@ -33,11 +35,13 @@ class FinderSpec extends ObjectBehavior
         $this->shouldHaveType('PragmaRX\ZIPcode\Support\Finder');
     }
 
-	public function it_can_find_a_zip($http)
+	public function it_can_find_a_zip($http, $timer)
 	{
 		$this->getZip()->getCountry()->setCountryData($this->data->countryArray);
 
 		$http->consume('testwebService')->willReturn($this->data->dataArray);
+
+		$timer->elapsedRaw()->willReturn('0.0002');
 
 		$this->find('20250030')->shouldHaveType('PragmaRX\ZIPcode\Support\Result');
 
