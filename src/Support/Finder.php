@@ -7,10 +7,24 @@ use PragmaRX\Support\Timer;
 
 class Finder extends BaseClass implements FinderInterface {
 
+	/**
+	 * The zip instance.
+	 *
+	 * @var
+	 */
 	private $zip_instance;
 
+	/**
+	 * The http layer object.
+	 *
+	 * @var Http|HttpInterface
+	 */
 	private $http;
 
+	/**
+	 * @param HttpInterface $http
+	 * @param Timer $timer
+	 */
 	public function __construct(HttpInterface $http = null, Timer $timer = null)
 	{
 		$this->http = ! $http
@@ -24,17 +38,24 @@ class Finder extends BaseClass implements FinderInterface {
 		$this->result = new Result();
 	}
 
-	public function find($zip, $webService = null)
+	/**
+	 * Find a zip.
+	 *
+	 * @param $zip
+	 * @param null $finderService
+	 * @return mixed
+	 */
+	public function find($zip, $finderService = null)
 	{
 		$this->getZip()->setCode($zip);
 
-		$webServices = ! $webService
-			? $this->getZip()->getCountry()->getWebServices()
-			: [ $webService ];
+		$webServices = ! $finderService
+						? $this->getZip()->getCountry()->getWebServices()
+						: [ $finderService ];
 
-		foreach($webServices as $webService)
+		foreach($webServices as $finderService)
 		{
-			if ($result = $this->searchZipUsingWebService($webService))
+			if ($result = $this->searchZipUsingWebService($finderService))
 			{
 				return $this->getResult();
 			}
@@ -50,7 +71,6 @@ class Finder extends BaseClass implements FinderInterface {
 	 *
 	 * @param $webService
 	 * @throws \PragmaRX\ZIPcode\Exceptions\WebServicesNotFound
-	 * @internal param $zip
 	 * @return bool|mixed
 	 */
 	public function searchZipUsingWebService($webService)
@@ -80,17 +100,17 @@ class Finder extends BaseClass implements FinderInterface {
 	 *
 	 * @param $zip
 	 * @param $webService
-	 * @throws Exceptions\WebServicesNotFound
-	 * @internal param $url
-	 * @internal param $query
-	 * @internal param $format
+	 * @param bool $addTimer
 	 * @return array|bool
 	 */
-	public function gatherInformationFromZip($zip, $webService)
+	public function gatherInformationFromZip($zip, $webService, $addTimer = true)
 	{
 		$url = $this->buildUrl($webService);
 
-		$t = (new Timer)->start();
+		if ($addTimer)
+		{
+			$t = (new Timer)->start();
+		}
 
 		if ($result = $this->http->consume($url))
 		{
@@ -106,13 +126,18 @@ class Finder extends BaseClass implements FinderInterface {
 
 			$result['web_service'] = $webService->getName();
 
-			$result['timer'] = $t->elapsed();
+			if ($addTimer)
+			{
+				$result['timer'] = $t->elapsed();
+			}
 		}
 
 		return $result;
 	}
 
 	/**
+	 * Get the current zip instance.
+	 *
 	 * @return Zip
 	 */
 	public function getZip()
@@ -121,6 +146,8 @@ class Finder extends BaseClass implements FinderInterface {
 	}
 
 	/**
+	 * Set the zip instance.
+	 *
 	 * @param Zip $zip
 	 */
 	public function setZip($zip)

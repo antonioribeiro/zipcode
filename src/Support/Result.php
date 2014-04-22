@@ -70,6 +70,17 @@ class Result extends BaseClass {
 	}
 
 	/**
+	 * Get all of the result as array except for a specified array of items.
+	 *
+	 * @param $keys
+	 * @return array
+	 */
+	public function except($keys)
+	{
+		return array_diff_key($this->toArray(), array_flip((array) $keys));
+	}
+
+	/**
 	 * Convert to json.
 	 *
 	 * @return string

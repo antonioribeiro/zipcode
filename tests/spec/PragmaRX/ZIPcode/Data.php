@@ -64,7 +64,6 @@ class Data {
 		'logradouro' => 'Professor Quintino do Vale',
 		'web_service' => 'testwebService',
 		'country_id' => 'BR',
-		'timer' => '0.0002',
 		'zip' => "20250030",
 		'sub' => ['value' => 'this is the sub value'],
 	];
@@ -81,7 +80,6 @@ class Data {
 		'missing_field' => null,
 		'web_service' => 'testwebService',
 		'country_id' => 'BR',
-		'timer' => '0.0002',
 	];
 
 	public $resultArray = [

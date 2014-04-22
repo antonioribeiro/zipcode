@@ -41,11 +41,9 @@ class FinderSpec extends ObjectBehavior
 
 		$http->consume('testwebService')->willReturn($this->data->dataArray);
 
-		$timer->elapsedRaw()->willReturn('0.0002');
-
 		$this->find('20250030')->shouldHaveType('PragmaRX\ZIPcode\Support\Result');
 
-		$this->find('20250030')->toArray()->shouldBe($this->data->finalResultArray);
+		$this->find('20250030')->except(['timer'])->shouldBe($this->data->finalResultArray);
 	}
 
 	public function it_correctly_get_an_results()
@@ -53,29 +51,33 @@ class FinderSpec extends ObjectBehavior
 		$this->getResult()->shouldHaveType('PragmaRX\ZIPcode\Support\Result');
 	}
 
-	public function it_gets_a_correct_zip_after_search($http)
+	public function it_gets_a_correct_zip_after_search($http, $timer)
 	{
 		$this->getZip()->getCountry()->setCountryData($this->data->countryArray);
 
 		$http->consume('testwebService')->willReturn($this->data->dataArray);
+
+		$timer->elapsedRaw()->willReturn('0.0002');
 
 		$this->find('20250030');
 
 		$this->getZip()->getCode()->shouldBe('20250030');
 	}
 
-	public function it_gets_an_empty_list_of_errors_on_success($http)
+	public function it_gets_an_empty_list_of_errors_on_success($http, $timer)
 	{
 		$this->getZip()->getCountry()->setCountryData($this->data->countryArray);
 
 		$http->consume('testwebService')->willReturn($this->data->dataArray);
+
+		$timer->elapsedRaw()->willReturn('0.0002');
 
 		$this->find('20250030');
 
 		$this->getErrors()->shouldBe($this->data->missingFieldError);
 	}
 
-	public function it_can_gather_information_from_zip($http)
+	public function it_can_gather_information_from_zip($http, $timer)
 	{
 		$this->getZip()->getCountry()->setCountryData($this->data->countryArray);
 
@@ -83,7 +85,7 @@ class FinderSpec extends ObjectBehavior
 
 		$http->consume('testwebService')->willReturn($this->data->dataArray); // returns an empty result
 
-		$this->gatherInformationFromZip('20250-030', $webService)->shouldBe($this->data->dataArrayWithRaw);
+		$this->gatherInformationFromZip('20250-030', $webService, false)->shouldBe($this->data->dataArrayWithRaw);
 	}
 
 	public function it_can_find_zip_by_web_service_name($http)
