@@ -18,7 +18,7 @@ return [
 
 			'url' => 'http://geocoder.ca',
 
-			'query' => '/?postal=%s&geoit=XML',
+			'query' => '/?postal=%zip_code%&geoit=XML',
 
 			'zip_format' => '999999',
 

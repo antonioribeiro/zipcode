@@ -7,9 +7,9 @@ return [
 	'web_services' => [
 
 		[
-			'name' => 'republicavirtual',
+			'name' => 'RepublicaVirtual',
 			'url' => 'http://republicavirtual.com.br/web_cep.php',
-			'query' => '?cep=%s&formato=json',
+			'query' => '?cep=%zip_code%&formato=json',
 			'zip_format' => '99999999',
 			'_check_resultado' => '1',
 			'fields' => [
@@ -25,7 +25,7 @@ return [
 		[
 			'name' => 'viacep',
 			'url' => 'http://viacep.com.br/',
-			'query' => 'ws/%s/json/',
+			'query' => 'ws/%zip_code%/json/',
 			'zip_format' => '99999999',
 			'fields' => [
 				'zip' => 'cep',
@@ -42,7 +42,7 @@ return [
 		[
 			'name' => 'appservidor',
 			'url' => 'http://appservidor.com.br/webservice/cep',
-			'query' => '?CEP=%s',
+			'query' => '?CEP=%zip_code%',
 			'zip_format' => '99999999',
 			'fields' => [
 				'zip' => 'cep',
@@ -58,7 +58,7 @@ return [
 		[
 			'name' => 'correiocontrol',
 			'url' => 'http://cep.correiocontrol.com.br',
-			'query' => '/%s.json',
+			'query' => '/%zip_code%.json',
 			'zip_format' => '99999999',
 			'fields' => [
 				'zip' => 'cep',
@@ -74,7 +74,7 @@ return [
 		[
 			'name' => 'clareslab',
 			'url' => 'http://clareslab.com.br',
-			'query' => '/ws/cep/json/%s/',
+			'query' => '/ws/cep/json/%zip_code%/',
 			'zip_format' => '99999-999',
 			'fields' => [
 				'zip' => 'cep',
@@ -85,6 +85,19 @@ return [
 				'street_kind' => null,
 				'street_name' => 'endereco',
 			],
+		],
+
+		[
+			'name' => 'Geonames',
+
+			'api_login' => 'demo',
+
+			'query_parameters' => [
+				'api_login' => 'demo',
+				'country' => 'BR',
+			],
+
+			'zip_format' => '99999999',
 		],
 
 	],

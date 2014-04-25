@@ -9,7 +9,7 @@ return [
 		[
 			'name' => 'zippopotam',
 			'url' => 'http://api.zippopotam.us',
-			'query' => '/JP/%s',
+			'query' => '/JP/%zip_code%',
 			'zip_format' => '99999',
 			'fields' => [
 				'zip' => 'post code',

@@ -2,27 +2,27 @@
 
 return [
 
-	'zip_length' => 5,
+	'zip_length' => 4,
 
 	'web_services' => [
 
 		[
 			'name' => 'Geonames',
 
-			'zip_format' => '99999',
+			'zip_format' => '9999',
 
 			'query_parameters' => [
-				'country' => 'FR',
+				'country' => 'AU',
 			],
 		],
 
 		[
 			'name' => 'Zippopotamus',
 
-			'zip_format' => '99999',
+			'zip_format' => '9999',
 
 			'query_parameters' => [
-				'country' => 'FR',
+				'country' => 'AU',
 			],
 		],
 

@@ -12,7 +12,7 @@ return [
 			'zip_format' => '99999',
 
 			'query_parameters' => [
-				'country' => 'FR',
+				'country' => 'ES',
 			],
 		],
 
@@ -22,7 +22,7 @@ return [
 			'zip_format' => '99999',
 
 			'query_parameters' => [
-				'country' => 'FR',
+				'country' => 'ES',
 			],
 		],
 
