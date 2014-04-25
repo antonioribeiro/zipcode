@@ -105,7 +105,7 @@ class Finder extends BaseClass implements FinderInterface {
 	 */
 	public function gatherInformationFromZip($zip, $webService, $addTimer = true)
 	{
-		$url = $this->buildUrl($webService);
+		$url = $webService->getUrl($zip);
 
 		if ($addTimer)
 		{
@@ -153,20 +153,6 @@ class Finder extends BaseClass implements FinderInterface {
 	public function setZip($zip)
 	{
 		$this->zip_instance = $zip;
-	}
-
-	/**
-	 * Build a web service url.
-	 *
-	 * @param $webService
-	 * @return string
-	 */
-	private function buildUrl($webService)
-	{
-		return sprintf(
-			$webService->getUrl().$webService->getQuery(),
-			$this->zip_instance->format($webService->getZipFormat())
-		);
 	}
 
 	/**

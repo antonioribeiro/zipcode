@@ -27,6 +27,14 @@ class WebService {
 	private $query;
 
 	/**
+	 * The query string part of the url.
+	 *
+	 * @var
+	 */
+	private $iterateOn;
+
+
+	/**
 	 * The zip format allowed by this webservice.
 	 *
 	 * @var
@@ -46,6 +54,8 @@ class WebService {
 	 * @var
 	 */
 	private $mandatoryFields;
+
+	private $queryParameters;
 
 	/**
 	 * The fields that will always be present.
@@ -80,6 +90,8 @@ class WebService {
 	 */
 	public function parse($webService)
 	{
+		$webService = $this->getWebServiceInfo($webService);
+
 		$this->name = $webService['name'];
 
 		$this->url = $webService['url'];
@@ -88,9 +100,13 @@ class WebService {
 
 		$this->zipFormat = $webService['zip_format'];
 
+		$this->iterateOn = isset($webService['iterate_on']) ? $webService['iterate_on'] : [];
+
 		$this->fields = $webService['fields'];
 
 		$this->mandatoryFields = isset($webService['mandatory_fields']) ? $webService['mandatory_fields'] : [];
+
+		$this->queryParameters = isset($webService['query_parameters']) ? $webService['query_parameters'] : [];
 	}
 
 	/**
@@ -114,6 +130,16 @@ class WebService {
 	}
 
 	/**
+	 * Name getter.
+	 *
+	 * @return mixed
+	 */
+	public function getIterateOn()
+	{
+		return $this->iterateOn;
+	}
+
+	/**
 	 * Query getter.
 	 *
 	 * @return mixed
@@ -124,13 +150,35 @@ class WebService {
 	}
 
 	/**
-	 * Url getter.
+	 * Query setter.
 	 *
 	 * @return mixed
 	 */
-	public function getUrl()
+	public function setQuery($query)
 	{
-		return $this->url;
+		$this->query = $query;
+	}
+
+	/**
+	 * Query parameter getter.
+	 *
+	 * @return mixed
+	 */
+	public function getQueryParameter($parameterName)
+	{
+		return isset($this->queryParameters[$parameterName])
+				? $this->queryParameters[$parameterName]
+				: null;
+	}
+
+	/**
+	 * Query parameter setter.
+	 *
+	 * @return mixed
+	 */
+	public function setQueryParameter($queryParameter, $value)
+	{
+		$this->queryParameters[$queryParameter] = $value;
 	}
 
 	/**
@@ -185,4 +233,59 @@ class WebService {
 		return $this->mandatoryFields;
 	}
 
+	public function setUrl($url)
+	{
+		$this->url = $url;
+	}
+
+	/**
+	 * Build a web service url.
+	 *
+	 * @param $webService
+	 * @return string
+	 */
+	public function getUrl(Zip $zip)
+	{
+		return $this->replaceParameters($zip, $this->url.$this->query);
+	}
+
+	public function replaceParameters($zip, $url)
+	{
+		$url = str_replace('%zip_code%', $zip->format($this->getZipFormat()), $url);
+
+		foreach ($this->queryParameters as $name => $value)
+		{
+			$url = str_replace("%$name%", $value, $url);
+		}
+
+		return $url;
+	}
+
+	public function getWebServiceInfo($webService)
+	{
+		$name = $webService['name'];
+
+		$info = $this->loadWebServiceInfo($webService['name']);
+
+		return array_replace_recursive($info, $webService);
+	}
+
+	public function loadWebServiceInfo($name)
+	{
+		$file = __DIR__."/WebServices/Services/$name.php";
+
+		if ( ! file_exists($file))
+		{
+			return [];
+		}
+
+		try
+		{
+			return require($file);
+		}
+		catch(\Exception $e)
+		{
+			throw new WebServicesNotFound("Error loading web services for web service '$name': ".$e->getMessage(), 1);
+		}
+	}
 }

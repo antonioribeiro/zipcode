@@ -121,7 +121,7 @@ class Country {
 		}
 		catch(\Exception $e)
 		{
-			throw new WebServicesNotFound("Error loading web services for country country '$country': ".$e->getMessage(), 1);
+			throw new WebServicesNotFound("Error loading web services for country '$country': ".$e->getMessage(), 1);
 		}
 	}
 

@@ -58,7 +58,7 @@ class ZIPcode extends BaseClass
 
 		$this->finder->setZip($this->zip);
 
-		$this->setCountry('BR');
+		$this->setCountry('ES');
 	}
 
 	/**

@@ -25,6 +25,11 @@ class Data {
 
 				'_check_resultado' => '1',
 
+				'query_parameters' => [
+					'api_login' => 'demo',
+					'country' => 'BR',
+				],
+
 				'fields' => [
 					'zip' => 'cep',
 					'state_id' => 'uf',

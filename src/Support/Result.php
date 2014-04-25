@@ -39,21 +39,61 @@ class Result extends BaseClass {
 		$this->clearProperties();
 		$this->clearErrors();
 
-		if ( ! $this->validate($result, $webService))
+		$fields = $webService->getFields();
+		$fixed = [];
+		foreach($fields as $key => $value)
 		{
-			return false;
+			if (is_numeric($key))
+			{
+				$fixed[] = $value;
+
+				unset($fields[$key]);
+			}
 		}
 
-		foreach($webService->getFields() as $property => $nameInResultSet)
+		// if ( ! $this->validate($result, $webService))
+		// {
+		// 	return false;
+		// }
+
+		if ($iterateOn = $webService->getIterateOn())
 		{
-			$nameInResultSet = $nameInResultSet ?: $property;
+			$places = $result[$iterateOn];
 
-			$property = is_numeric($property) ? $nameInResultSet : $property;
+			if (count($places) == count($places, 1))
+			{
+				$places = [$places];
+			}
+		}
+		else
+		{
+			$places = [$result];
+		}
 
-			$this->publicProperties[$property] = array_get($result, $nameInResultSet)
+		foreach ($places as $key => $place)
+		{
+			$properties = [];
+
+			foreach($fields as $property => $nameInResultSet)
+			{
+				$nameInResultSet = $nameInResultSet ?: $property;
+
+				$property = is_numeric($property) ? $nameInResultSet : $property;
+
+				$properties[$property] = array_get($place, $nameInResultSet)
+											?: ( array_get($result, $nameInResultSet)
 													?: ( isset($this->publicProperties[$property])
-														? $this->publicProperties[$property]
-														: null );
+															? $this->publicProperties[$property]
+															: null )
+													);
+			}
+
+			$this->publicProperties['results'][] = $properties;
+		}
+
+		foreach($fixed as $key)
+		{
+			$this->publicProperties[$key] = $result[$key];
 		}
 
 		return true;

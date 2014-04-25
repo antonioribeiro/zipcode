@@ -24,7 +24,7 @@ return array(
 
     'zipcode_alias' => 'ZIPcode',
 
-	'country_id' => 'CA',
+	'country_id' => 'FR',
 
 	'preferred_web_service' => null,
 

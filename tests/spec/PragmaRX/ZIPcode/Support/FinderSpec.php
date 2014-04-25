@@ -79,13 +79,17 @@ class FinderSpec extends ObjectBehavior
 
 	public function it_can_gather_information_from_zip($http, $timer)
 	{
-		$this->getZip()->getCountry()->setCountryData($this->data->countryArray);
+		$zip = $this->getZip();
+			
+		$zip->setCode('20250-030');
 
-		$webService = $this->getZip()->getCountry()->getWebServices()->getWebServiceByName('testwebService');
+		$zip->getCountry()->setCountryData($this->data->countryArray);
+
+		$webService = $zip->getCountry()->getWebServices()->getWebServiceByName('testwebService');
 
 		$http->consume('testwebService')->willReturn($this->data->dataArray); // returns an empty result
 
-		$this->gatherInformationFromZip('20250-030', $webService, false)->shouldBe($this->data->dataArrayWithRaw);
+		$this->gatherInformationFromZip($zip, $webService, false)->shouldBe($this->data->dataArrayWithRaw);
 	}
 
 	public function it_can_find_zip_by_web_service_name($http)
