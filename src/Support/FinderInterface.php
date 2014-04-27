@@ -9,14 +9,8 @@ interface FinderInterface
 	 *
 	 * @param $zip
 	 * @param null $finderService
-	 * @return mixed
+	 * @return \PragmaRX\ZIPcode\Support\Result
 	 */
-	public function find($zip, $finderService);
+	public function find($zip, $finderService = null);
 
-	/**
-	 * Set the zip instance.
-	 *
-	 * @param Zip $zip
-	 */
-	public function setZip($zip);
 }
