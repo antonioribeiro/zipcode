@@ -12,6 +12,7 @@ use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
 use Data;
+use \RecursiveIteratorIterator;
 
 class FinderSpec extends ObjectBehavior
 {
@@ -43,7 +44,16 @@ class FinderSpec extends ObjectBehavior
 
 		$this->find('20250030')->shouldHaveType('PragmaRX\ZIPcode\Support\Result');
 
-		$this->find('20250030')->except(['timer'])->shouldBe($this->data->finalResultArray);
+		$this->find('20250030')->except(['timer'])->shouldBeEqualArray($this->data->finalResultArray);
+	}
+
+	public function it_returns_true_success_finding_a_valid_zipcode($http, $timer)
+	{
+		$this->getZip()->getCountry()->setCountryData($this->data->countryArray);
+
+		$http->consume('testwebService')->willReturn($this->data->dataArray);
+
+		$this->find('20250030')->getSuccess()->shouldBe(true);
 	}
 
 	public function it_correctly_get_an_results()
@@ -74,13 +84,13 @@ class FinderSpec extends ObjectBehavior
 
 		$this->find('20250030');
 
-		$this->getErrors()->shouldBe($this->data->missingFieldError);
+		$this->getErrors()->shouldBe([]);
 	}
 
 	public function it_can_gather_information_from_zip($http, $timer)
 	{
 		$zip = $this->getZip();
-			
+
 		$zip->setCode('20250-030');
 
 		$zip->getCountry()->setCountryData($this->data->countryArray);
@@ -119,15 +129,39 @@ class FinderSpec extends ObjectBehavior
 		$this->find('20250030', $this->getZip()->getCountry()->getWebServices()->getWebServiceByName('testwebService'))->isEmpty()->shouldBe(false);
 	}
 
-	public function it_returns_empty_result_on_missing_mandatory_fields($http)
+	public function it_returns_false_success_when_nothing_was_found($http)
 	{
-		unset($this->data->dataArray['uf']);
-
 		$this->getZip()->getCountry()->setCountryData($this->data->countryArray);
 
-		$http->consume('testwebService')->willReturn($this->data->dataArray);
+		$http->consume('testwebService')->willReturn($this->data->errorArray);
 
-		$this->find('20250030', $this->getZip()->getCountry()->getWebServices()->getWebServiceByName('testwebService'))->isEmpty()->shouldBe(true);
+		$this->find('20250030', 'testwebService')->shouldHaveType('PragmaRX\ZIPcode\Support\Result');
+
+		$this->find('20250030', 'testwebService')->getSuccess()->shouldBe(false);
 	}
 
+	public function getMatchers()
+	{
+		return [
+			'beEqualArray' => function($a, $b) {
+				return array_equal($a, $b);
+			},
+		];
+	}
+}
+
+function array_equal($a, $b)
+{
+	$a = one_dimension_array($a);
+
+	$b = one_dimension_array($b);
+
+	return array_diff($a, $b) === array_diff($b, $a);
+}
+
+function one_dimension_array($array)
+{
+	$it =  new \RecursiveIteratorIterator(new \RecursiveArrayIterator($array));
+
+	return iterator_to_array($it, false);
 }

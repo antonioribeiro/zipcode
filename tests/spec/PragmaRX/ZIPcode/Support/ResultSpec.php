@@ -2,6 +2,8 @@
 
 namespace spec\PragmaRX\ZIPcode\Support;
 
+// require __DIR__.'/../Data.php'; /// you may need to uncomment this
+
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
@@ -29,9 +31,7 @@ class ResultSpec extends ObjectBehavior
 
 		$this->getZip()->shouldBe('20250030');
 
-		$this->getCity()->shouldBe('Rio de Janeiro');
-
-		$this->getStreetName()->shouldBe('Professor Quintino do Vale');
+		$this->getAddresses()->shouldBe($this->data->address);
 	}
 
 	public function it_can_return_array()

@@ -2,9 +2,13 @@
 
 namespace spec\PragmaRX\ZIPcode;
 
+//require __DIR__.'/Data.php'; /// you may need to uncomment this
+
 use PhpSpec\ObjectBehavior;
 use PragmaRX\ZIPcode\Support\Result;
 use PragmaRX\ZIPcode\Support\WebService;
+use PragmaRX\ZIPcode\Support\Country;
+use PragmaRX\ZIPcode\Support\Zip;
 use Prophecy\Argument;
 use PragmaRX\ZIPcode\Support\Finder;
 use PragmaRX\ZIPcode\Support\Http;
@@ -19,7 +23,7 @@ class ZIPCodeSpec extends ObjectBehavior
 
 	private $data;
 
-	public function let(Finder $finder, Http $http)
+	public function let(Finder $finder)
 	{
 		$this->data = new Data;
 
@@ -90,5 +94,9 @@ class ZIPCodeSpec extends ObjectBehavior
 		$this->getCountry()->getId()->shouldBe('CA');
 	}
 
+	public function it_can_get_a_list_of_countries()
+	{
+		$this->getAvailableCountries()->shouldBeArray();
+	}
 
 }

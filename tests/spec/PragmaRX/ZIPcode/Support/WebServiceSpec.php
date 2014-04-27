@@ -30,26 +30,24 @@ class WebServiceSpec extends ObjectBehavior
 	{
 		$this->getFixedFields()->shouldBeArray();
 
-		$this->getFixedFields()->shouldBe([
-			'zip',
-			'web_service',
-			'country_id',
-			'timer',
-			'result_raw',
-		]);
+		$this->getFixedFields()->shouldBe($this->data->fixedFields);
 	}
 
 	public function it_can_get_all_properties()
 	{
 		$country = new Country();
+
 		$zip = new Zip($country);
 
 		$this->getName()->shouldBe($this->data->webService['name']);
+
 		$this->getUrl($zip)->shouldBe($this->data->webService['url']);
+
 		$this->getQuery()->shouldBe($this->data->webService['query']);
+
 		$this->getZipFormat()->shouldBe($this->data->webService['zip_format']);
-		$this->getFields()->shouldBe(array_merge($this->data->webService['fields'], ['zip','web_service','country_id', 'timer', 'result_raw']));
-		$this->getMandatoryFields()->shouldBe($this->data->webService['mandatory_fields']);
+
+		$this->getFields()->shouldBe(array_merge($this->data->webService['fields'], $this->data->fixedFields));
 	}
 
 	public function it_can_get_set_query_parameters()
@@ -70,19 +68,12 @@ class WebServiceSpec extends ObjectBehavior
 		$this->setUrl('http://geocode.com');
 
 		$this->setQueryParameter('api_login', 'demo');
-		
+
 		$this->setQueryParameter('country', 'BR');
 
 		$this->setQuery('/?zip=%zip_code%&country=%country%&username=%api_login%');
 
 		$this->getUrl($zip)->shouldBe('http://geocode.com/?zip=20250030&country=BR&username=demo');
-	}
-
-	public function it_can_check_if_a_field_is_mandatory()
-	{
-		$this->isMandatory('state_id')->shouldBe(true);
-
-		$this->isMandatory('not_mandatory')->shouldBe(false);
 	}
 
 	public function it_can_get_a_field_relation()

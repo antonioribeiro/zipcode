@@ -38,15 +38,17 @@ class ZipSpec extends ObjectBehavior
 		$this->clearZip('2.0.2.5.0-0.3.0')->shouldBe('20250030');
 	}
 
-	public function it_throws_on_invalid_zips($country)
+	public function it_knows_invalid_zips($country)
 	{
-		$country->getZipLength()->willReturn(100);
+		$country->getId()->willReturn('BR');
 
-		$this->shouldThrow('PragmaRX\ZIPcode\Exceptions\InvalidZipCode')->duringValidateZip('2');
+		$country->getZipLength()->willReturn(5);
 
-		$this->shouldThrow('PragmaRX\ZIPcode\Exceptions\InvalidZipCode')->duringValidateZip('a');
+		$this->validateZip('1234')->shouldReturn(false);
 
-		$this->shouldThrow('PragmaRX\ZIPcode\Exceptions\InvalidZipCode')->duringValidateZip('2025003333');
+		$this->validateZip('1.2.3.4')->shouldReturn(false);
+
+		$this->validateZip('1234567')->shouldReturn(false);
 	}
 
 	public function it_formats_zip_correctly()

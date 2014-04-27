@@ -13,6 +13,8 @@ class CountrySpec extends ObjectBehavior
 {
 	private $data;
 
+	private $countryCount = 22;
+
 	public function let()
 	{
 		$this->data = new Data;
@@ -49,4 +51,8 @@ class CountrySpec extends ObjectBehavior
 		$this->getWebServices()->shouldHaveType('PragmaRX\ZIPcode\Support\WebServices');
 	}
 
+	public function it_can_get_a_list_of_coutries()
+	{
+		$this->all()->shouldHaveCount($this->countryCount);
+	}
 }
