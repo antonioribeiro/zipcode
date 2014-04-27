@@ -11,7 +11,9 @@ class Result extends BaseClass {
 	 *
 	 * @var array
 	 */
-	private $publicProperties = [];
+	private $publicProperties = [
+		'success' => false
+	];
 
 	/**
 	 * Create a result.
@@ -37,10 +39,13 @@ class Result extends BaseClass {
 	public function parse(array $result, WebService $webService)
 	{
 		$this->clearProperties();
+
 		$this->clearErrors();
 
 		$fields = $webService->getFields();
+
 		$fixed = [];
+
 		foreach($fields as $key => $value)
 		{
 			if (is_numeric($key))
@@ -51,12 +56,7 @@ class Result extends BaseClass {
 			}
 		}
 
-		// if ( ! $this->validate($result, $webService))
-		// {
-		// 	return false;
-		// }
-
-		if ($iterateOn = $webService->getIterateOn())
+		if (($iterateOn = $webService->getIterateOn()) && isset($result[$webService->getIterateOn()]))
 		{
 			$places = $result[$iterateOn];
 
@@ -88,13 +88,17 @@ class Result extends BaseClass {
 													);
 			}
 
-			$this->publicProperties['results'][] = $properties;
+			$this->publicProperties['addresses'][] = $properties;
 		}
 
 		foreach($fixed as $key)
 		{
-			$this->publicProperties[$key] = $result[$key];
+			$this->publicProperties[$key] = isset($result[$key])
+											? $result[$key]
+											: null;
 		}
+
+		$this->publicProperties['success'] = $this->validate();
 
 		return true;
 	}
@@ -142,6 +146,8 @@ class Result extends BaseClass {
 	}
 
 	/**
+	 * Check if the result is empty.
+	 *
 	 * @return bool
 	 */
 	public function isEmpty()
@@ -191,68 +197,42 @@ class Result extends BaseClass {
 	}
 
 	/**
-	 * Check if an result is valid.
+	 * Check if this result is valid.
 	 *
-	 * @param $result
-	 * @param $webService
-	 * @return bool
 	 */
-	private function validate($result, WebService $webService)
+	private function validate()
 	{
-		$valid = 0;
-		$missingMandatory = false;
+		$propertiesCount = 0;
 
-		foreach($webService->getFields() as $field => $originalName)
+		foreach ($this->publicProperties['addresses'] as $properties)
 		{
-			if ($originalName)
+			foreach($properties as $value)
 			{
-				if ($webService->getField($field))
-				{
-					$has = array_get($result, $originalName);
-
-					$valid += $has ? 1 : 0;
-
-					if ( ! $has)
-					{
-						if ($webService->isMandatory($field))
-						{
-							$missingMandatory = true;
-
-							$this->addError("Mandatory field '$field' is missing from result.");
-						}
-						else
-						{
-							$this->addError("Result field '$field' was not found.");
-						}
-					}
-				}
+				$propertiesCount += is_null($value) ? 0 : 1;
 			}
 		}
 
-		if ($valid > 0)
-		{
-			foreach($webService as $key => $field)
-			{
-				if (substr($key, 0, 7) == '_check_')
-				{
-					$field = substr($key, 7);
+		return $propertiesCount >= 2;
+	}
 
-					if ( ! $valid = $valid && $result[$field] == $webService->getField($key))
-					{
-						$this->addError("Verification field $key should be '".$webService->getField($key)."' and is '$result[$field]'.");
-					};
-				}
-			}
-		}
+	/**
+	 * Set the success property.
+	 *
+	 * @param $bool
+	 */
+	public function setSuccess($bool)
+	{
+		$this->publicProperties['success'] = $bool;
+	}
 
-		if ($valid == 0 || $missingMandatory)
-		{
-			$this->addError('Result is not valid.');
-
-			return false;
-		}
-
-		return true;
+	/**
+	 * Set the errors property.
+	 *
+	 * @param $errors
+	 */
+	public function setErrors($errors)
+	{
+		$this->publicProperties['errors'] = $errors;
 	}
 
 }

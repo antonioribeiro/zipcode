@@ -22,6 +22,15 @@ class Finder extends BaseClass implements FinderInterface {
 	private $http;
 
 	/**
+	 * The query parameters.
+	 *
+	 * @var array
+	 */
+	private $queryParameters = [];
+
+	/**
+	 * Create a finder.
+	 *
 	 * @param HttpInterface $http
 	 * @param Timer $timer
 	 */
@@ -47,7 +56,12 @@ class Finder extends BaseClass implements FinderInterface {
 	 */
 	public function find($zip, $finderService = null)
 	{
-		$this->getZip()->setCode($zip);
+		if ( ! $this->getZip()->setCode($zip))
+		{
+			$this->addErrors($this->getZip()->getErrors());
+
+			return $this->makeErrorResult();
+		}
 
 		$webServices = ! $finderService
 						? $this->getZip()->getCountry()->getWebServices()
@@ -63,7 +77,7 @@ class Finder extends BaseClass implements FinderInterface {
 
 		$this->addError('No webServices provided information about this zip code.');
 
-		return new $this->result;
+		return $this->makeEmptyResult();
 	}
 
 	/**
@@ -83,9 +97,13 @@ class Finder extends BaseClass implements FinderInterface {
 			}
 		}
 
+		$webService->absorbQueryParameters($this->queryParameters);
+
 		if ($result = $this->gatherInformationFromZip($this->getZip(), $webService))
 		{
-			if ($this->setResult($result, $webService))
+			$this->setResult($result, $webService);
+
+			if ($this->getResult()->getSuccess())
 			{
 				return $this->getResult();
 			}
@@ -123,6 +141,12 @@ class Finder extends BaseClass implements FinderInterface {
 			$result['country_id'] = ! isset($result['country_id']) || empty($result['country_id'])
 				? $this->getZip()->getCountry()->getId()
 				: $result['country_id'];
+
+			$result['country_name'] = ! isset($result['country_name']) || empty($result['country_name'])
+				? $this->getZip()->getCountry()->getName()
+				: $result['country_name'];
+
+			$result['service_query_url'] = $url;
 
 			$result['web_service'] = $webService->getName();
 
@@ -185,11 +209,50 @@ class Finder extends BaseClass implements FinderInterface {
 	}
 
 	/**
+	 * The http object getter.
+	 *
 	 * @return Http|HttpInterface
 	 */
 	public function getHttp()
 	{
 		return $this->http;
+	}
+
+	/**
+	 * Make an empty result.
+	 *
+	 * @return mixed
+	 */
+	private function makeEmptyResult()
+	{
+		return new $this->result;
+	}
+
+	/**
+	 * Make a result object with error info.
+	 *
+	 * @return mixed
+	 */
+	private function makeErrorResult()
+	{
+		$result = new $this->result;
+
+		$result->setSuccess(false);
+
+		$result->setErrors($this->getErrors());
+
+		return $result;
+	}
+
+	/**
+	 * Set a query parameter.
+	 *
+	 * @param $queryParameter
+	 * @param $value
+	 */
+	public function setQueryParameter($queryParameter, $value)
+	{
+		$this->queryParameters[$queryParameter] = $value;
 	}
 
 } 

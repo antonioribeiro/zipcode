@@ -5,7 +5,7 @@ namespace PragmaRX\ZIPcode\Support;
 use PragmaRX\ZIPcode\Support\Country;
 use PragmaRX\ZIPcode\Exceptions\InvalidZipCode;
 
-class Zip {
+class Zip extends BaseClass {
 
 	/**
 	 * The zip code.
@@ -14,6 +14,11 @@ class Zip {
 	 */
 	private $code;
 
+	/**
+	 * The country.
+	 *
+	 * @var Country
+	 */
 	private $country;
 
 	/**
@@ -30,12 +35,18 @@ class Zip {
 	 * Code setter.
 	 *
 	 * @param $code
+	 * @return bool
 	 */
 	public function setCode($code)
 	{
-		$this->validateZip($code);
+		if ( ! $this->validateZip($code))
+		{
+			return false;
+		}
 
 		$this->code = $code;
+
+		return true;
 	}
 
 	/**
@@ -71,7 +82,14 @@ class Zip {
 
 		if ($this->country->getZipLength() && strlen($zip) !== $this->country->getZipLength())
 		{
-			throw new InvalidZipCode;
+			$this->addError(sprintf(
+				"Wrong zip length: in %s zip length is %s not %s.",
+				$this->country->getId(),
+				$this->country->getZipLength(),
+				strlen($zip)
+			));
+
+			return false;
 		}
 
 		return $zip;
@@ -107,6 +125,16 @@ class Zip {
 	public function getCountry()
 	{
 		return $this->country;
+	}
+
+	/**
+	 * Country setter.
+	 *
+	 * @param Country $country
+	 */
+	public function setCountry($country)
+	{
+		$this->country = $country;
 	}
 
 }

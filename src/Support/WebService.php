@@ -33,7 +33,6 @@ class WebService {
 	 */
 	private $iterateOn;
 
-
 	/**
 	 * The zip format allowed by this webservice.
 	 *
@@ -49,16 +48,14 @@ class WebService {
 	private $fields;
 
 	/**
-	 * The mandatory fields.
+	 * The query parameters.
 	 *
 	 * @var
 	 */
-	private $mandatoryFields;
-
-	private $queryParameters;
+	private $queryParameters = [];
 
 	/**
-	 * The fields that will always be present.
+	 * The fields that should always be present.
 	 *
 	 * @var array
 	 */
@@ -66,6 +63,8 @@ class WebService {
 		'zip',
 		'web_service',
 		'country_id',
+		'country_name',
+		'service_query_url',
 		'timer',
 		'result_raw',
 	];
@@ -103,8 +102,6 @@ class WebService {
 		$this->iterateOn = isset($webService['iterate_on']) ? $webService['iterate_on'] : [];
 
 		$this->fields = $webService['fields'];
-
-		$this->mandatoryFields = isset($webService['mandatory_fields']) ? $webService['mandatory_fields'] : [];
 
 		$this->queryParameters = isset($webService['query_parameters']) ? $webService['query_parameters'] : [];
 	}
@@ -152,6 +149,7 @@ class WebService {
 	/**
 	 * Query setter.
 	 *
+	 * @param $query
 	 * @return mixed
 	 */
 	public function setQuery($query)
@@ -162,6 +160,7 @@ class WebService {
 	/**
 	 * Query parameter getter.
 	 *
+	 * @param $parameterName
 	 * @return mixed
 	 */
 	public function getQueryParameter($parameterName)
@@ -174,6 +173,8 @@ class WebService {
 	/**
 	 * Query parameter setter.
 	 *
+	 * @param $queryParameter
+	 * @param $value
 	 * @return mixed
 	 */
 	public function setQueryParameter($queryParameter, $value)
@@ -205,17 +206,8 @@ class WebService {
 	}
 
 	/**
-	 * Check if a field is mandatory.
+	 * Fixed fields list getter.
 	 *
-	 * @param $field
-	 * @return bool
-	 */
-	public function isMandatory($field)
-	{
-		return in_array($field, $this->mandatoryFields);
-	}
-
-	/**
 	 * @return array
 	 */
 	public function getFixedFields()
@@ -224,15 +216,10 @@ class WebService {
 	}
 
 	/**
-	 * Get the list of mandatory fields.
+	 * Url setter.
 	 *
-	 * @return mixed
+	 * @param $url
 	 */
-	public function getMandatoryFields()
-	{
-		return $this->mandatoryFields;
-	}
-
 	public function setUrl($url)
 	{
 		$this->url = $url;
@@ -241,7 +228,7 @@ class WebService {
 	/**
 	 * Build a web service url.
 	 *
-	 * @param $webService
+	 * @param Zip $zip
 	 * @return string
 	 */
 	public function getUrl(Zip $zip)
@@ -249,6 +236,13 @@ class WebService {
 		return $this->replaceParameters($zip, $this->url.$this->query);
 	}
 
+	/**
+	 * Replace the list of parameters in the url by its values.
+	 *
+	 * @param $zip
+	 * @param $url
+	 * @return mixed
+	 */
 	public function replaceParameters($zip, $url)
 	{
 		$url = str_replace('%zip_code%', $zip->format($this->getZipFormat()), $url);
@@ -261,6 +255,13 @@ class WebService {
 		return $url;
 	}
 
+	/**
+	 * Get the webservice information data.
+	 *
+	 * @param $webService
+	 * @return array
+	 * @throws WebServicesNotFound
+	 */
 	public function getWebServiceInfo($webService)
 	{
 		$name = $webService['name'];
@@ -270,6 +271,12 @@ class WebService {
 		return array_replace_recursive($info, $webService);
 	}
 
+	/**
+	 * Load the webservice information data from disk.
+	 *
+	 * @param $name
+	 * @throws WebServicesNotFound
+	 */
 	public function loadWebServiceInfo($name)
 	{
 		$file = __DIR__."/WebServices/Services/$name.php";
@@ -286,6 +293,19 @@ class WebService {
 		catch(\Exception $e)
 		{
 			throw new WebServicesNotFound("Error loading web services for web service '$name': ".$e->getMessage(), 1);
+		}
+	}
+
+	/**
+	 * Import query parameters.
+	 *
+	 * @param $queryParameters
+	 */
+	public function absorbQueryParameters($queryParameters)
+	{
+		foreach ($queryParameters as $key => $parameter)
+		{
+			$this->setQueryParameter($key, $parameter);
 		}
 	}
 }

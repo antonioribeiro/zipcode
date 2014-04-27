@@ -9,6 +9,7 @@ use PragmaRX\ZIPcode\Support\Zip;
 use PragmaRX\ZIPcode\Support\Result;
 use PragmaRX\ZIPcode\Support\Country;
 
+
 class ZIPcode extends BaseClass
 {
 	/**
@@ -58,7 +59,7 @@ class ZIPcode extends BaseClass
 
 		$this->finder->setZip($this->zip);
 
-		$this->setCountry('ES');
+		$this->setCountry('BR');
 	}
 
 	/**
@@ -210,4 +211,13 @@ class ZIPcode extends BaseClass
 		$this->country->getWebServices()->clearWebServicesList();
 	}
 
+	public function getAvailableCountries()
+	{
+		return $this->country->all();
+	}
+
+	public function setQueryParameter($queryParameter, $value)
+	{
+		$this->finder->setQueryParameter($queryParameter, $value);
+	}
 }

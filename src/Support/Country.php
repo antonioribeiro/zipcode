@@ -4,6 +4,8 @@ namespace PragmaRX\ZIPcode\Support;
 
 use PragmaRX\ZIPcode\Exceptions\WebServicesNotFound;
 
+use PragmaRX\Support\Filesystem;
+
 class Country {
 
 	/**
@@ -28,17 +30,29 @@ class Country {
 	private $webServices;
 
 	/**
+	 * The country name.
+	 *
+	 * @var
+	 */
+	private $name;
+
+	/**
 	 * Create a country.
 	 *
 	 * @param array $webServices
+	 * @param \PragmaRX\Support\Filesystem $fileSystem
 	 */
-	public function __construct(array $webServices = array())
+	public function __construct(array $webServices = array(), Filesystem $fileSystem = null)
 	{
+		$this->fileSystem = ! $fileSystem
+			? new Filesystem()
+			: $fileSystem;
+
 		$this->webServices = new WebServices($webServices);
 	}
 
 	/**
-	 * Absorb (import) all country data.
+	 * Import country data.
 	 *
 	 * @param $webServices
 	 */
@@ -46,10 +60,14 @@ class Country {
 	{
 		$this->zipLength = $webServices['zip_length'];
 
+		$this->name = $webServices['country_name'];
+
 		$this->webServices->setWebServices($webServices['web_services']);
 	}
 
 	/**
+	 * Set the zip code length.
+	 *
 	 * @param mixed $zipLength
 	 */
 	public function setZipLength($zipLength)
@@ -75,6 +93,16 @@ class Country {
 	public function getId()
 	{
 		return $this->id;
+	}
+
+	/**
+	 * Get the country name.
+	 *
+	 * @return mixed
+	 */
+	public function getName()
+	{
+		return $this->name;
 	}
 
 	/**
@@ -108,7 +136,7 @@ class Country {
 	 */
 	private function loadWebServices($country)
 	{
-		$file = __DIR__."/WebServices/Countries/$country.php";
+		$file = $this->getPath()."/$country.php";
 
 		if ( ! file_exists($file))
 		{
@@ -125,4 +153,34 @@ class Country {
 		}
 	}
 
+	/**
+	 * Get a list of all countries.
+	 *
+	 * @return array
+	 */
+	public function all()
+	{
+		$all = [];
+
+		$countries = $this->fileSystem->allFiles($this->getPath());
+
+		foreach($countries as $country)
+		{
+			$country = require($country->getPathName());
+
+			$all[$country['country_id']] = $country['country_name'];
+		}
+
+		return $all;
+	}
+
+	/**
+	 * The the path where the country file is.
+	 *
+	 * @return string
+	 */
+	public function getPath()
+	{
+		return __DIR__."/WebServices/Countries";
+	}
 }
