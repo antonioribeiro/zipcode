@@ -10,6 +10,8 @@ return [
 
 	'country_name' => 'Germany',
 
+	'zip_code_example' => '10178',
+
 	'web_services' => [
 
 		[

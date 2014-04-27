@@ -1,25 +1,36 @@
 <?php
 
+$country = 'PT';
+
 return [
 
 	'zip_length' => 7,
 
+	'country_id' => $country,
+
+	'country_name' => 'Portugal',
+
+	'zip_code_example' => '1100-585',
+
 	'web_services' => [
 
 		[
-			'name' => 'zippopotam',
-			'url' => 'http://api.zippopotam.us',
-			'query' => '/PT/%zip_code%',
+			'name' => 'Geonames',
+
+			'zip_format' => '9999999',
+
+			'query_parameters' => [
+				'country' => $country,
+			],
+		],
+
+		[
+			'name' => 'Zippopotamus',
+
 			'zip_format' => '9999-999',
-			'fields' => [
-				'zip' => 'post code',
-				'state_id' => 'places.0.state abbreviation',
-				'state_name' => 'places.0.state',
-				'city' => 'places.0.place name',
-				'country_id' => 'country abbreviation',
-				'country_name' => 'country',
-				'longitude' => 'places.0.longitude',
-				'latitude' => 'places.0.latitude',
+
+			'query_parameters' => [
+				'country' => $country,
 			],
 		],
 

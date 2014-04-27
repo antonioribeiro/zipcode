@@ -4,6 +4,12 @@ return [
 
 	'zip_length' => 8,
 
+	'country_id' => 'BR',
+
+	'country_name' => 'Brazil',
+
+	'zip_code_example' => '22290-240',
+
 	'web_services' => [
 
 		[

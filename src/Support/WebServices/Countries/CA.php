@@ -1,10 +1,38 @@
 <?php
 
+$country = 'CA';
+
 return [
 
 	'zip_length' => 6,
 
+	'country_id' => $country,
+
+	'country_name' => 'Canada',
+
+	'zip_code_example' => 'H0H0H0',
+
 	'web_services' => [
+
+		[
+			'name' => 'Geonames',
+
+			'zip_format' => '999999',
+
+			'query_parameters' => [
+				'country' => $country,
+			],
+		],
+
+		[
+			'name' => 'Zippopotamus',
+
+			'zip_format' => '999999',
+
+			'query_parameters' => [
+				'country' => $country,
+			],
+		],
 
 		/**
 		 * geocoder.ca - http://geocoder.ca/?api=1
