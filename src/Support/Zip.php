@@ -3,7 +3,6 @@
 namespace PragmaRX\ZIPcode\Support;
 
 use PragmaRX\ZIPcode\Support\Country;
-use PragmaRX\ZIPcode\Exceptions\InvalidZipCode;
 
 class Zip extends BaseClass {
 
@@ -73,7 +72,6 @@ class Zip extends BaseClass {
 	 * Zip validator.
 	 *
 	 * @param $zip
-	 * @throws InvalidZipCode
 	 * @return bool
 	 */
 	public function validateZip($zip)
