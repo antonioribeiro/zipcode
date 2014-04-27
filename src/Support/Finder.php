@@ -101,6 +101,8 @@ class Finder extends BaseClass implements FinderInterface {
 
 		if ($result = $this->gatherInformationFromZip($this->getZip(), $webService))
 		{
+			// Check and set the result. Success property will be set to true or false.
+			//
 			$this->setResult($result, $webService);
 
 			if ($this->getResult()->getSuccess())
@@ -108,7 +110,6 @@ class Finder extends BaseClass implements FinderInterface {
 				return $this->getResult();
 			}
 		}
-
 
 		return false;
 	}
@@ -123,32 +124,14 @@ class Finder extends BaseClass implements FinderInterface {
 	 */
 	public function gatherInformationFromZip($zip, $webService, $addTimer = true)
 	{
-		$url = $webService->getUrl($zip);
-
 		if ($addTimer)
 		{
 			$t = (new Timer)->start();
 		}
 
-		if ($result = $this->http->consume($url))
+		if ($result = $this->http->consume($webService->getUrl($zip)))
 		{
-			$result['result_raw'] = $result;
-
-			$result['zip'] = ! isset($result['zip']) || empty($result['zip'])
-				? $zip->getCode()
-				: $result['zip'];
-
-			$result['country_id'] = ! isset($result['country_id']) || empty($result['country_id'])
-				? $this->getZip()->getCountry()->getId()
-				: $result['country_id'];
-
-			$result['country_name'] = ! isset($result['country_name']) || empty($result['country_name'])
-				? $this->getZip()->getCountry()->getName()
-				: $result['country_name'];
-
-			$result['service_query_url'] = $url;
-
-			$result['web_service'] = $webService->getName();
+			$result = $this->createFixedResultFields($result, $webService, $zip);
 
 			if ($addTimer)
 			{
@@ -253,6 +236,37 @@ class Finder extends BaseClass implements FinderInterface {
 	public function setQueryParameter($queryParameter, $value)
 	{
 		$this->queryParameters[$queryParameter] = $value;
+	}
+
+	/**
+	 * Create the fixed result fields.
+	 *
+	 * @param $result
+	 * @param $webService
+	 * @param $zip
+	 * @return array
+	 */
+	private function createFixedResultFields($result, $webService, $zip)
+	{
+		$result['result_raw'] = $result;
+
+		$result['zip'] = !isset($result['zip']) || empty($result['zip'])
+			? $zip->getCode()
+			: $result['zip'];
+
+		$result['country_id'] = !isset($result['country_id']) || empty($result['country_id'])
+			? $this->getZip()->getCountry()->getId()
+			: $result['country_id'];
+
+		$result['country_name'] = !isset($result['country_name']) || empty($result['country_name'])
+			? $this->getZip()->getCountry()->getName()
+			: $result['country_name'];
+
+		$result['service_query_url'] = $webService->getUrl($zip);
+
+		$result['web_service'] = $webService->getName();
+
+		return $result;
 	}
 
 } 
