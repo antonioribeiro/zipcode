@@ -13,14 +13,6 @@ interface HttpInterface
 	public function consume($url);
 
 	/**
-	 * Check if a site is up.
-	 *
-	 * @param $url
-	 * @return bool
-	 */
-	public function ping($url);
-
-	/**
 	 * User agent getter.
 	 *
 	 * @return mixed

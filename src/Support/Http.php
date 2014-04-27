@@ -60,19 +60,6 @@ class Http implements HttpInterface
 	}
 
 	/**
-	 * Check if a site is up.
-	 *
-	 * @param $url
-	 * @return bool
-	 */
-	public function ping($url)
-	{
-		$result = $this->consume($url, 'none');
-
-		return ! empty($result);
-	}
-
-	/**
 	 * Decode a request result.
 	 *
 	 * @param $body
