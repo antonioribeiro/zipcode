@@ -4,9 +4,9 @@ return [
 
 	'url' => 'http://api.geonames.org/',
 
-	'api_login' => 'demo',
+	'geonames_api_login' => 'demo',
 
-	'query' => 'postalCodeSearch?country=%country%&postalcode=%zip_code%&username=%api_login%',
+	'query' => 'postalCodeSearch?country=%country%&postalcode=%zip_code%&username=%geonames_api_login%',
 
 	'query_parameters' => [
 		'api_login' => 'demo',
