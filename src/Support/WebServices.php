@@ -4,10 +4,10 @@ namespace PragmaRX\ZIPcode\Support;
 
 use ArrayIterator;
 use Countable;
-use IteratorAggregate;
-use PragmaRX\ZIPcode\Exceptions\WebServicesNotFound;
 use ArrayAccess;
 use Traversable;
+use IteratorAggregate;
+use PragmaRX\ZIPcode\Exceptions\WebServicesNotFound;
 
 class WebServices implements ArrayAccess, IteratorAggregate, Countable {
 
@@ -190,7 +190,7 @@ class WebServices implements ArrayAccess, IteratorAggregate, Countable {
 	 */
 	public function offsetGet($offset)
 	{
-		unset($this->webServices[$offset]);
+		return $this->webServices[$offset];
 	}
 
 	/**
