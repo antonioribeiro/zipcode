@@ -197,6 +197,8 @@ class Result extends BaseClass implements ArrayAccess, IteratorAggregate, Counta
 			}
 		}
 
+		dd($this->publicProperties);
+
 		throw new PropertyDoesNotExists("Property '$name' does not exists in Result object.");
 	}
 

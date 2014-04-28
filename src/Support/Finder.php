@@ -250,9 +250,9 @@ class Finder extends BaseClass implements FinderInterface {
 	{
 		$result['result_raw'] = $result;
 
-		$result['zip'] = !isset($result['zip']) || empty($result['zip'])
+		$result['zip_code'] = !isset($result['zip_code']) || empty($result['zip_code'])
 			? $zip->getCode()
-			: $result['zip'];
+			: $result['zip_code'];
 
 		$result['country_id'] = !isset($result['country_id']) || empty($result['country_id'])
 			? $this->getZip()->getCountry()->getId()
@@ -269,4 +269,4 @@ class Finder extends BaseClass implements FinderInterface {
 		return $result;
 	}
 
-} 
+}

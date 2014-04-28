@@ -62,7 +62,7 @@ class WebService {
 	 * @var array
 	 */
 	private $fixedFields = [
-		'zip',
+		'zip_code',
 		'web_service',
 		'country_id',
 		'country_name',

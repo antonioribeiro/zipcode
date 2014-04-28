@@ -17,7 +17,7 @@ return [
 	'iterate_on' => 'code',
 
 	'fields' => [
-		'zip' => 'postalcode',
+		'postal_code' => 'postalcode',
 
 		'state_name' => 'adminName1',
 
@@ -32,7 +32,7 @@ return [
 		'department' => 'adminName2',
 
 		'department_id' => 'adminCode2',
-		
+
 		'district' => 'adminName3',
 	],
 
