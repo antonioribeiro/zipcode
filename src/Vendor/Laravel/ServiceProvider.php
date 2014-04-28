@@ -108,9 +108,9 @@ class ServiceProvider extends PragmaRXServiceProvider {
 				)
 			);
 
-			if ($this->getConfig('country_id'))
+			if ($this->getConfig('country'))
 			{
-				$z->setCountry($this->getConfig('country_id'));
+				$z->setCountry($this->getConfig('country'));
 			}
 
 			if ($this->getConfig('preferred_web_service'))
