@@ -244,4 +244,8 @@ class Result extends BaseClass {
 		$this->clearErrors();
 	}
 
+	public function __toString()
+	{
+		return $this->toJson();
+	}
 }
