@@ -2,7 +2,7 @@
 
 namespace spec\PragmaRX\ZIPcode\Support;
 
-// require __DIR__.'/../Data.php'; /// you may need to uncomment this
+ require __DIR__.'/../Data.php'; /// you may need to uncomment this
 
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
@@ -29,7 +29,7 @@ class ResultSpec extends ObjectBehavior
 	{
 		$this->parse($this->data->resultArray, new WebService($this->data->webService));
 
-		$this->getZip()->shouldBe('20250030');
+		$this->getZipCode()->shouldBe('20250030');
 
 		$this->getAddresses()->shouldBe($this->data->address);
 	}

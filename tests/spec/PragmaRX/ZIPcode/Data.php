@@ -9,7 +9,7 @@ class Data {
 	public $missingFieldError = ["Result field 'missing_field' was not found."];
 
 	public $fixedFields = [
-		'zip',
+		'zip_code',
 		'web_service',
 		'country_id',
 		'country_name',
@@ -45,7 +45,7 @@ class Data {
 				],
 
 				'fields' => [
-					'zip' => 'cep',
+					'postal_code' => 'cep',
 					'state_id' => 'uf',
 					'state_name' => null,
 					'city' => 'cidade',
@@ -85,14 +85,14 @@ class Data {
 		'country_id' => 'BR',
 		'country_name' => 'Brazil',
 		'service_query_url' => 'testwebService',
-		'zip' => "20250030",
+		'zip_code' => "20250030",
 		'sub' => ['value' => 'this is the sub value'],
 	];
 
 	public $finalResultArray = [
 		'addresses' => [
 			[
-				'zip' => '20250030',
+				'zip_code' => '20250030',
 				'state_id' => 'RJ',
 				'state_name' => null,
 				'city' => 'Rio de Janeiro',
@@ -103,7 +103,7 @@ class Data {
 				'missing_field' => null,
 			],
 		],
-		'zip' => '20250030',
+		'zip_code' => '20250030',
 		'web_service' => 'testwebService',
 		'country_id' => 'BR',
 		'country_name' => 'Brazil',
@@ -121,7 +121,7 @@ class Data {
 		'logradouro' =>  "Professor Quintino do Vale",
 		'sub' => ['value' => 'this is the sub value'],
 		'missing_field' =>  NULL,
-		'zip' => '20250030',
+		'zip_code' => '20250030',
 		'web_service' => 'testwebService',
 		'country_id' => 'BR',
 		'country_name' => 'Brazil',
@@ -131,7 +131,7 @@ class Data {
 
 	public $address = [
 		[
-			'zip' => "20250030",
+			'postal_code' => "20250030",
 			'state_id' => "RJ",
 			'state_name' => null,
 			'city' => "Rio de Janeiro",
