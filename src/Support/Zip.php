@@ -3,6 +3,7 @@
 namespace PragmaRX\ZIPcode\Support;
 
 use PragmaRX\ZIPcode\Support\Country;
+use PragmaRX\ZIPcode\Exceptions\InvalidZipCode;
 
 class Zip extends BaseClass {
 

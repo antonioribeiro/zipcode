@@ -38,9 +38,7 @@ class Result extends BaseClass {
 	 */
 	public function parse(array $result, WebService $webService)
 	{
-		$this->clearProperties();
-
-		$this->clearErrors();
+		$this->clearAll();
 
 		$fields = $webService->getFields();
 
@@ -70,7 +68,7 @@ class Result extends BaseClass {
 			$places = [$result];
 		}
 
-		foreach ($places as $key => $place)
+		foreach ($places as $place)
 		{
 			$properties = [];
 
@@ -137,7 +135,7 @@ class Result extends BaseClass {
 	}
 
 	/**
-	 * Clear the list of propperties.
+	 * Clear the list of properties.
 	 *
 	 */
 	private function clearProperties()
@@ -233,6 +231,17 @@ class Result extends BaseClass {
 	public function setErrors($errors)
 	{
 		$this->publicProperties['errors'] = $errors;
+	}
+
+	/**
+	 * Cleanup the result.
+	 *
+	 */
+	private function clearAll()
+	{
+		$this->clearProperties();
+
+		$this->clearErrors();
 	}
 
 }

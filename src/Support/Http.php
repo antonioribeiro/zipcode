@@ -16,6 +16,13 @@ class Http implements HttpInterface
 	private $userAgent = 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11';
 
 	/**
+	 * The Guzzle instance.
+	 *
+	 * @var
+	 */
+	private $guzzle;
+
+	/**
 	 * User agent getter.
 	 *
 	 * @return mixed

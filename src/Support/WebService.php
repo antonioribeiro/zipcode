@@ -3,6 +3,8 @@
 namespace PragmaRX\ZIPcode\Support;
 
 
+use PragmaRX\ZIPcode\Exceptions\WebServicesNotFound;
+
 class WebService {
 
 	/**
@@ -260,15 +262,14 @@ class WebService {
 	 *
 	 * @param $webService
 	 * @return array
-	 * @throws WebServicesNotFound
+	 * @throws \PragmaRX\ZIPcode\Exceptions\WebServicesNotFound
 	 */
 	public function getWebServiceInfo($webService)
 	{
-		$name = $webService['name'];
-
-		$info = $this->loadWebServiceInfo($webService['name']);
-
-		return array_replace_recursive($info, $webService);
+		return array_replace_recursive(
+			$this->loadWebServiceInfo($webService['name']),
+			$webService
+		);
 	}
 
 	/**
@@ -276,6 +277,7 @@ class WebService {
 	 *
 	 * @param $name
 	 * @throws WebServicesNotFound
+	 * @return array
 	 */
 	public function loadWebServiceInfo($name)
 	{
