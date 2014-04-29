@@ -113,7 +113,7 @@ This is an example of what you get when you search a Zip with it:
 }
 ```
 
-ZIPcode returns a Result object and all properties can be accessed:
+ZIPcode returns a `PragmaRX\ZIPcode\Support\Result` object and all properties can be accessed:
 
 * As array
 * As string, which will make it return a JSON
