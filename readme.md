@@ -76,7 +76,7 @@ This is an example of what you get when you search a Zip with it:
 {
    country_id:"CH",
    country_name:"Switzerland",
-   zip:"1005",
+   zip_code:"1005",
    web_service:"Geonames",
    timer:"0.7808",
    service_query_url:"http://api.geonames.org/postalCodeSearch?country=CH&postalcode=1005&username=demo",
@@ -112,6 +112,17 @@ This is an example of what you get when you search a Zip with it:
    success:true
 }
 ```
+
+ZIPcode returns a Result object and all properties can be accessed:
+
+* As array
+* As string, which will make it return a JSON
+* Using getters:
+
+```
+$result->getWebService();
+```
+
 ## Laravel Form Example
 
 This is an unconventionally hacked Laravel router which renders a form to query zips on a selected country:
