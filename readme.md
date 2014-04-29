@@ -117,10 +117,11 @@ ZIPcode returns a `PragmaRX\ZIPcode\Support\Result` object and all properties ca
 
 * As array
 * As string, which will make it return a JSON
-* Using getters:
+* Using camel cased getters:
 
 ```
 $result->getWebService();
+$result->getCountryName();
 ```
 
 ## Laravel Form Example
