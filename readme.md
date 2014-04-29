@@ -66,7 +66,7 @@ Dynamically change query parameters, so if you have a [Geonames](http://www.geon
 
 ## Web Services
 
-This package uses web services all around the world to provide addresses and cities information. There are at least 2 web services available to all countries (6 for Brazil), if ZIPcode cannot access one or doesn't find a zip on it, it automatically falls back to the others. If you know of any other web services available that could be better than those, please create an issue or PR with it.
+This package uses web services all around the world to provide addresses and cities information. There are at least 2 web services available to all countries (Brazil currently has 6), if ZIPcode cannot access one or doesn't find a zip on it, it automatically falls back to the others. If you know of any other web services available that could be better than those, please create an issue or PR with it.
 
 ## Result
 
