@@ -2,7 +2,7 @@
 
 namespace spec\PragmaRX\ZIPcode\Support;
 
- require __DIR__.'/../Data.php'; /// you may need to uncomment this
+// require __DIR__.'/../Data.php'; /// you may need to uncomment this
 
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
