@@ -39,7 +39,7 @@ class Zip extends BaseClass {
 	 */
 	public function setCode($code)
 	{
-		if ( ! $this->validateZip($code))
+		if (!$this->validateZip($code))
 		{
 			return false;
 		}
@@ -81,12 +81,14 @@ class Zip extends BaseClass {
 
 		if ($this->country->getZipLength() && strlen($zip) !== $this->country->getZipLength())
 		{
-			$this->addError(sprintf(
-				"Wrong zip length: in %s zip length is %s not %s.",
-				$this->country->getId(),
-				$this->country->getZipLength(),
-				strlen($zip)
-			));
+			$this->addError(
+				sprintf(
+					"Wrong zip length: in %s zip length is %s not %s.",
+					$this->country->getId(),
+					$this->country->getZipLength(),
+					strlen($zip)
+				)
+			);
 
 			return false;
 		}
@@ -134,6 +136,20 @@ class Zip extends BaseClass {
 	public function setCountry($country)
 	{
 		$this->country = $country;
+	}
+
+	public function formatForCountry($zip = null, $country = null)
+	{
+		$zip = $zip	?: $this->getCode();
+
+		$country = $country ?: $this->getCountry();
+
+		if ($country == 'BR')
+		{
+			return format_masked($zip, '99999-999');
+		}
+
+		return $zip;
 	}
 
 }

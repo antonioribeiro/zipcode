@@ -220,4 +220,20 @@ class ZIPcode extends BaseClass
 	{
 		$this->finder->setQueryParameter($queryParameter, $value);
 	}
+
+	/**
+	 * Zip setter & validate zip.
+	 *
+	 * @param $zip
+	 * @return bool
+	 */
+	public function clearZip($zip)
+	{
+		return $this->zip->clearZip($zip);
+	}
+
+	public function formatForCountry($zip = null, $country = null)
+	{
+		return $this->zip->formatForCountry($zip, $country);
+	}
 }
