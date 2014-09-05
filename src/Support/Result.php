@@ -347,4 +347,20 @@ class Result extends BaseClass implements ArrayAccess, IteratorAggregate, Counta
 	{
 		return count($this->publicProperties);
 	}
+
+	/**
+	 * Get a public property as object property.
+	 *
+	 * @param $name
+	 * @return null
+	 */
+	public function __get($name)
+	{
+		if ( ! isset($this->publicProperties[$name]))
+		{
+			return null;
+		}
+
+		return $this->publicProperties[$name];
+	}
 }
