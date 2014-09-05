@@ -16,7 +16,7 @@
     ],
 
     "require": {
-        "pragmarx/support": "~0.2|dev-master",
+        "pragmarx/support": "~0.2",
         "guzzlehttp/guzzle": "~4.0",
         "illuminate/filesystem": "~4"
     },
