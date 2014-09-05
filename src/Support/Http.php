@@ -56,14 +56,21 @@ class Http implements HttpInterface
 		{
 			$response = $this->guzzle->get($url);
 		}
-		catch(RequestException $e)
+		catch (RequestException $e)
 		{
 			return false;
 		}
 
-		return $response->getStatusCode() != 200
-				? false
-				: $this->decode($response->getBody());
+		$result = $response->getStatusCode() != 200
+			? false
+			: $this->decode($response->getBody());
+
+		if (!is_array($result))
+		{
+			$result = false;
+		}
+
+		return $result;
 	}
 
 	/**
@@ -78,7 +85,7 @@ class Http implements HttpInterface
 		{
 			return json_decode($body, true);
 		}
-		else
+
 		if (is_xml($body))
 		{
 			return xml_to_json($body);
