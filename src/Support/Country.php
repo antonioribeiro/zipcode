@@ -164,7 +164,7 @@ class Country {
 
 		$countries = $this->fileSystem->allFiles($this->getPath());
 
-		foreach($countries as $country)
+		foreach ($countries as $country)
 		{
 			$country = require($country->getPathName());
 

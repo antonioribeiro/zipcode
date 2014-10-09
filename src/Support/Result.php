@@ -50,7 +50,7 @@ class Result extends BaseClass implements ArrayAccess, IteratorAggregate, Counta
 
 		$fixed = [];
 
-		foreach($fields as $key => $value)
+		foreach ($fields as $key => $value)
 		{
 			if (is_numeric($key))
 			{
@@ -78,7 +78,7 @@ class Result extends BaseClass implements ArrayAccess, IteratorAggregate, Counta
 		{
 			$properties = [];
 
-			foreach($fields as $property => $nameInResultSet)
+			foreach ($fields as $property => $nameInResultSet)
 			{
 				$nameInResultSet = $nameInResultSet ?: $property;
 
@@ -95,7 +95,7 @@ class Result extends BaseClass implements ArrayAccess, IteratorAggregate, Counta
 			$this->publicProperties['addresses'][] = $properties;
 		}
 
-		foreach($fixed as $key)
+		foreach ($fixed as $key)
 		{
 			$this->publicProperties[$key] = isset($result[$key])
 											? $result[$key]
@@ -156,7 +156,7 @@ class Result extends BaseClass implements ArrayAccess, IteratorAggregate, Counta
 	 */
 	public function isEmpty()
 	{
-		foreach($this->toArray() as $value)
+		foreach ($this->toArray() as $value)
 		{
 			if (! empty($value))
 			{
@@ -210,7 +210,7 @@ class Result extends BaseClass implements ArrayAccess, IteratorAggregate, Counta
 
 		foreach ($this->publicProperties['addresses'] as $properties)
 		{
-			foreach($properties as $value)
+			foreach ($properties as $value)
 			{
 				$propertiesCount += is_null($value) ? 0 : 1;
 			}

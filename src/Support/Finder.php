@@ -67,7 +67,7 @@ class Finder extends BaseClass implements FinderInterface {
 						? $this->getZip()->getCountry()->getWebServices()
 						: [ $finderService ];
 
-		foreach($webServices as $finderService)
+		foreach ($webServices as $finderService)
 		{
 			if ($result = $this->searchZipUsingWebService($finderService))
 			{

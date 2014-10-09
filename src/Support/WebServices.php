@@ -120,7 +120,7 @@ class WebServices implements ArrayAccess, IteratorAggregate, Countable {
 	 */
 	private function searchWebServiceByName($name)
 	{
-		foreach($this->webServices as $key => $service)
+		foreach ($this->webServices as $key => $service)
 		{
 			if ($service->getName() == $name)
 			{
