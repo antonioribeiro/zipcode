@@ -25,9 +25,6 @@ use PragmaRX\ZIPcode\ZIPcode;
 use PragmaRX\ZIPcode\Support\Http;
 use PragmaRX\ZIPcode\Support\Finder;
 
-use PragmaRX\Support\Config;
-use PragmaRX\Support\Filesystem;
-
 use PragmaRX\Support\ServiceProvider as PragmaRXServiceProvider;
 
 class ServiceProvider extends PragmaRXServiceProvider {
