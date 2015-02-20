@@ -230,6 +230,41 @@ Add the service provider to your app/config/app.php:
 
     'PragmaRX\ZipCode\Vendor\Laravel\ServiceProvider',
 
+## Usign It
+
+#### Instantiate it directly
+
+```
+use PragmaRX\ZipCode\ZipCode;
+
+$zipcode = new ZipCode();
+
+return $zipcode->generateSecretKey()
+```
+
+#### In Laravel you can use the IoC Container and the contract
+
+```
+$zipcode = app()->make('PragmaRX\ZipCode\Contracts\ZipCode');
+
+return $zipcode->find('20250-030')
+```
+
+#### Or Method Injection, in Laravel 5
+
+```
+use PragmaRX\ZipCode\Contracts\ZipCode;
+
+class WelcomeController extends Controller {
+
+	public function generateKey(ZipCode $zipcode)
+	{
+		return $zipcode->find('20250-030');
+	}
+
+}
+```
+
 ## Author
 
 [Antonio Carlos Ribeiro](http://twitter.com/iantonioribeiro)
