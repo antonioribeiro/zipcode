@@ -7,11 +7,8 @@ namespace spec\PragmaRX\ZipCode;
 use PhpSpec\ObjectBehavior;
 use PragmaRX\ZipCode\Support\Result;
 use PragmaRX\ZipCode\Support\WebService;
-use PragmaRX\ZipCode\Support\Country;
-use PragmaRX\ZipCode\Support\Zip;
 use Prophecy\Argument;
 use PragmaRX\ZipCode\Support\Finder;
-use PragmaRX\ZipCode\Support\Http;
 
 use Data;
 

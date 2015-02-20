@@ -211,11 +211,22 @@ class ZipCode extends BaseClass
 		$this->country->getWebServices()->clearWebServicesList();
 	}
 
+	/**
+	 * Get all available countries.
+	 *
+	 * @return mixed
+	 */
 	public function getAvailableCountries()
 	{
 		return $this->country->all();
 	}
 
+	/**
+	 * Set the query parameter.
+	 *
+	 * @param $queryParameter
+	 * @param $value
+	 */
 	public function setQueryParameter($queryParameter, $value)
 	{
 		$this->finder->setQueryParameter($queryParameter, $value);
@@ -232,6 +243,13 @@ class ZipCode extends BaseClass
 		return $this->zip->clearZip($zip);
 	}
 
+	/**
+	 * Format a zip for a particular country.
+	 *
+	 * @param null $zip
+	 * @param null $country
+	 * @return mixed|null|string
+	 */
 	public function formatForCountry($zip = null, $country = null)
 	{
 		return $this->zip->formatForCountry($zip, $country);
