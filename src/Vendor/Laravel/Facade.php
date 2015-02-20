@@ -13,7 +13,7 @@ class Facade extends LaravelFacade {
 	 */
 	protected static function getFacadeAccessor()
 	{
-		return 'zipcode';
+		return 'PragmaRX\ZipCode\Contracts\ZipCode';
 	}
 
 }
