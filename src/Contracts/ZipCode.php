@@ -1,6 +1,6 @@
 <?php
 
-namespace PragmaRX\Contracts\ZipCode;
+namespace PragmaRX\ZipCode\Contracts;
 
 interface ZipCode
 {
