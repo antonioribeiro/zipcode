@@ -254,4 +254,5 @@ class ZipCode extends BaseClass
 	{
 		return $this->zip->formatForCountry($zip, $country);
 	}
+	
 }
