@@ -1,10 +1,10 @@
 <?php
 
-namespace spec\PragmaRX\ZIPcode\Support;
+namespace spec\PragmaRX\ZipCode\Support;
 
-use PragmaRX\ZIPcode\Support\Country;
-use PragmaRX\ZIPcode\Support\Http;
-use PragmaRX\ZIPcode\Support\Zip;
+use PragmaRX\ZipCode\Support\Country;
+use PragmaRX\ZipCode\Support\Http;
+use PragmaRX\ZipCode\Support\Zip;
 
 use PragmaRX\Support\Timer;
 
@@ -33,7 +33,7 @@ class FinderSpec extends ObjectBehavior
 
     public function it_is_initializable()
     {
-        $this->shouldHaveType('PragmaRX\ZIPcode\Support\Finder');
+        $this->shouldHaveType('PragmaRX\ZipCode\Support\Finder');
     }
 
 	public function it_can_find_a_zip($http, $timer)
@@ -42,7 +42,7 @@ class FinderSpec extends ObjectBehavior
 
 		$http->consume('testwebService')->willReturn($this->data->dataArray);
 
-		$this->find('20250030')->shouldHaveType('PragmaRX\ZIPcode\Support\Result');
+		$this->find('20250030')->shouldHaveType('PragmaRX\ZipCode\Support\Result');
 
 		$this->find('20250030')->except(['timer'])->shouldBeEqualArray($this->data->finalResultArray);
 	}
@@ -58,7 +58,7 @@ class FinderSpec extends ObjectBehavior
 
 	public function it_correctly_get_an_results()
 	{
-		$this->getResult()->shouldHaveType('PragmaRX\ZIPcode\Support\Result');
+		$this->getResult()->shouldHaveType('PragmaRX\ZipCode\Support\Result');
 	}
 
 	public function it_gets_a_correct_zip_after_search($http, $timer)
@@ -108,7 +108,7 @@ class FinderSpec extends ObjectBehavior
 
 		$http->consume('testwebService')->willReturn($this->data->dataArray);
 
-		$this->find('20250030', 'testwebService')->shouldHaveType('PragmaRX\ZIPcode\Support\Result');
+		$this->find('20250030', 'testwebService')->shouldHaveType('PragmaRX\ZipCode\Support\Result');
 	}
 
 	public function it_can_find_zip_on_specific_web_service($http)
@@ -117,7 +117,7 @@ class FinderSpec extends ObjectBehavior
 
 		$http->consume('testwebService')->willReturn($this->data->dataArray);
 
-		$this->find('20250030', $this->getZip()->getCountry()->getWebServices()->getWebServiceByName('testwebService'))->shouldHaveType('PragmaRX\ZIPcode\Support\Result');
+		$this->find('20250030', $this->getZip()->getCountry()->getWebServices()->getWebServiceByName('testwebService'))->shouldHaveType('PragmaRX\ZipCode\Support\Result');
 	}
 
 	public function it_returns_non_empty_result($http)
@@ -135,7 +135,7 @@ class FinderSpec extends ObjectBehavior
 
 		$http->consume('testwebService')->willReturn($this->data->errorArray);
 
-		$this->find('20250030', 'testwebService')->shouldHaveType('PragmaRX\ZIPcode\Support\Result');
+		$this->find('20250030', 'testwebService')->shouldHaveType('PragmaRX\ZipCode\Support\Result');
 
 		$this->find('20250030', 'testwebService')->getSuccess()->shouldBe(false);
 	}

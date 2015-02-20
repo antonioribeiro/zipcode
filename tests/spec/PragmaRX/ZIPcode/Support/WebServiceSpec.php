@@ -1,9 +1,9 @@
 <?php
 
-namespace spec\PragmaRX\ZIPcode\Support;
+namespace spec\PragmaRX\ZipCode\Support;
 
-use PragmaRX\ZIPcode\Support\Country;
-use PragmaRX\ZIPcode\Support\Zip;
+use PragmaRX\ZipCode\Support\Country;
+use PragmaRX\ZipCode\Support\Zip;
 
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
@@ -23,7 +23,7 @@ class WebServiceSpec extends ObjectBehavior
 
 	public function it_is_initializable()
     {
-        $this->shouldHaveType('PragmaRX\ZIPcode\Support\WebService');
+        $this->shouldHaveType('PragmaRX\ZipCode\Support\WebService');
     }
 
 	public function it_has_fixed_fields()

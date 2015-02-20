@@ -1,16 +1,16 @@
 <?php
 
-namespace PragmaRX\ZIPcode;
+namespace PragmaRX\ZipCode;
 
-use PragmaRX\ZIPcode\Support\BaseClass;
-use PragmaRX\ZIPcode\Support\Finder;
-use PragmaRX\ZIPcode\Support\FinderInterface;
-use PragmaRX\ZIPcode\Support\Zip;
-use PragmaRX\ZIPcode\Support\Result;
-use PragmaRX\ZIPcode\Support\Country;
+use PragmaRX\ZipCode\Support\BaseClass;
+use PragmaRX\ZipCode\Support\Finder;
+use PragmaRX\ZipCode\Support\FinderInterface;
+use PragmaRX\ZipCode\Support\Zip;
+use PragmaRX\ZipCode\Support\Result;
+use PragmaRX\ZipCode\Support\Country;
 
 
-class ZIPcode extends BaseClass
+class ZipCode extends BaseClass
 {
 	/**
 	 * The HTTP class.

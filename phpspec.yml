@@ -1,6 +1,6 @@
 suites:
   suite:
-    namespace: PragmaRX\ZIPcode
+    namespace: PragmaRX\ZipCode
     src_path: src
     spec_path: tests
     spec_prefix: spec

@@ -1,6 +1,6 @@
 <?php
 
-namespace spec\PragmaRX\ZIPcode\Support;
+namespace spec\PragmaRX\ZipCode\Support;
 
 require __DIR__.'/../Data.php';
 
@@ -22,7 +22,7 @@ class CountrySpec extends ObjectBehavior
 
 	public function it_is_initializable()
     {
-        $this->shouldHaveType('PragmaRX\ZIPcode\Support\Country');
+        $this->shouldHaveType('PragmaRX\ZipCode\Support\Country');
     }
 
 	public function it_can_set_a_country()
@@ -48,7 +48,7 @@ class CountrySpec extends ObjectBehavior
 	{
 		$this->setCountryData($this->data->countryArray);
 
-		$this->getWebServices()->shouldHaveType('PragmaRX\ZIPcode\Support\WebServices');
+		$this->getWebServices()->shouldHaveType('PragmaRX\ZipCode\Support\WebServices');
 	}
 
 	public function it_can_get_a_list_of_coutries()

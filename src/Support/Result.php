@@ -1,6 +1,6 @@
 <?php
 
-namespace PragmaRX\ZIPcode\Support;
+namespace PragmaRX\ZipCode\Support;
 
 use ArrayIterator;
 use Countable;
@@ -8,7 +8,7 @@ use ArrayAccess;
 use Traversable;
 use IteratorAggregate;
 
-use PragmaRX\ZIPcode\Exceptions\PropertyDoesNotExists;
+use PragmaRX\ZipCode\Exceptions\PropertyDoesNotExists;
 
 class Result extends BaseClass implements ArrayAccess, IteratorAggregate, Countable {
 
@@ -172,7 +172,7 @@ class Result extends BaseClass implements ArrayAccess, IteratorAggregate, Counta
 	 *
 	 * @param $name
 	 * @param array $arguments
-	 * @throws \PragmaRX\ZIPcode\Exceptions\PropertyDoesNotExists
+	 * @throws \PragmaRX\ZipCode\Exceptions\PropertyDoesNotExists
 	 * @return mixed
 	 */
 	public function __call($name, array $arguments)

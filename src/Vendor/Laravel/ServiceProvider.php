@@ -1,7 +1,7 @@
 <?php 
 
 /**
- * Part of the ZIPcode package.
+ * Part of the ZipCode package.
  *
  * NOTICE OF LICENSE
  *
@@ -11,7 +11,7 @@
  * bundled with this package in the LICENSE file.  It is also available at
  * the following URL: http://www.opensource.org/licenses/BSD-3-Clause
  *
- * @package    ZIPcode
+ * @package    ZipCode
  * @version    0.1.0
  * @author     Antonio Carlos Ribeiro @ PragmaRX
  * @license    BSD License (3-clause)
@@ -19,11 +19,11 @@
  * @link       http://pragmarx.com
  */
 
-namespace PragmaRX\ZIPcode\Vendor\Laravel;
+namespace PragmaRX\ZipCode\Vendor\Laravel;
 
-use PragmaRX\ZIPcode\ZIPcode;
-use PragmaRX\ZIPcode\Support\Http;
-use PragmaRX\ZIPcode\Support\Finder;
+use PragmaRX\ZipCode\ZipCode;
+use PragmaRX\ZipCode\Support\Http;
+use PragmaRX\ZipCode\Support\Finder;
 
 use PragmaRX\Support\ServiceProvider as PragmaRXServiceProvider;
 
@@ -55,7 +55,7 @@ class ServiceProvider extends PragmaRXServiceProvider {
 	 *
 	 * @var string
 	 */
-	protected $packageNameCapitalized = 'ZIPcode';
+	protected $packageNameCapitalized = 'ZipCode';
 
 	/**
 	 * This is the boot method for this ServiceProvider
@@ -76,7 +76,7 @@ class ServiceProvider extends PragmaRXServiceProvider {
 	{
 		$this->preRegister();
 
-		$this->registerZIPcode();
+		$this->registerZipCode();
 	}
 
 	/**
@@ -95,11 +95,11 @@ class ServiceProvider extends PragmaRXServiceProvider {
 	 *
 	 * @return void
 	 */
-	private function registerZIPcode()
+	private function registerZipCode()
 	{
 		$this->app['zipcode'] = $this->app->share(function($app)
 		{
-			$z = new ZIPcode(
+			$z = new ZipCode(
 				new Finder(
 					new Http
 				)

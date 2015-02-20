@@ -1,8 +1,8 @@
 <?php
 
-namespace spec\PragmaRX\ZIPcode\Support;
+namespace spec\PragmaRX\ZipCode\Support;
 
-use PragmaRX\ZIPcode\Support\Country;
+use PragmaRX\ZipCode\Support\Country;
 
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
@@ -19,7 +19,7 @@ class ZipSpec extends ObjectBehavior
 
     public function it_is_initializable()
     {
-        $this->shouldHaveType('PragmaRX\ZIPcode\Support\Zip');
+        $this->shouldHaveType('PragmaRX\ZipCode\Support\Zip');
     }
 
 	public function it_knows_valid_zips($country)

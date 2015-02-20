@@ -1,6 +1,6 @@
 <?php
 
-namespace PragmaRX\ZIPcode\Support;
+namespace PragmaRX\ZipCode\Support;
 
 interface FinderInterface
 {
@@ -9,7 +9,7 @@ interface FinderInterface
 	 *
 	 * @param $zip
 	 * @param null $finderService
-	 * @return \PragmaRX\ZIPcode\Support\Result
+	 * @return \PragmaRX\ZipCode\Support\Result
 	 */
 	public function find($zip, $finderService = null);
 

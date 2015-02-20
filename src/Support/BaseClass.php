@@ -6,7 +6,7 @@
  * Time: 18:20
  */
 
-namespace PragmaRX\ZIPcode\Support;
+namespace PragmaRX\ZipCode\Support;
 
 class BaseClass {
 

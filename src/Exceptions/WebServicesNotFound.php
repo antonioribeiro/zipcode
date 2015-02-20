@@ -1,6 +1,6 @@
 <?php
 
-namespace PragmaRX\ZIPcode\Exceptions;
+namespace PragmaRX\ZipCode\Exceptions;
 
 use Exception;
 

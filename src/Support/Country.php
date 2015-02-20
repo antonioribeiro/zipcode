@@ -1,8 +1,8 @@
 <?php
 
-namespace PragmaRX\ZIPcode\Support;
+namespace PragmaRX\ZipCode\Support;
 
-use PragmaRX\ZIPcode\Exceptions\WebServicesNotFound;
+use PragmaRX\ZipCode\Exceptions\WebServicesNotFound;
 
 use PragmaRX\Support\Filesystem;
 

@@ -1,6 +1,6 @@
-<?php namespace PragmaRX\ZIPcode\Vendor\Laravel;
+<?php namespace PragmaRX\ZipCode\Vendor\Laravel;
 /**
- * Part of the ZIPcode package.
+ * Part of the ZipCode package.
  *
  * NOTICE OF LICENSE
  *
@@ -10,7 +10,7 @@
  * bundled with this package in the LICENSE file.  It is also available at
  * the following URL: http://www.opensource.org/licenses/BSD-3-Clause
  *
- * @package    ZIPcode
+ * @package    ZipCode
  * @version    0.1.0
  * @author     Antonio Carlos Ribeiro @ PragmaRX
  * @license    BSD License (3-clause)

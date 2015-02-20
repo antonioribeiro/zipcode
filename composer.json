@@ -27,7 +27,7 @@
 
     "autoload": {
         "psr-4": {
-            "PragmaRX\\ZIPcode\\": "src/"
+            "PragmaRX\\ZipCode\\": "src/"
         }
     },
 

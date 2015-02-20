@@ -1,9 +1,9 @@
 <?php
 
-namespace PragmaRX\ZIPcode\Support;
+namespace PragmaRX\ZipCode\Support;
 
-use PragmaRX\ZIPcode\Support\Country;
-use PragmaRX\ZIPcode\Exceptions\InvalidZipCode;
+use PragmaRX\ZipCode\Support\Country;
+use PragmaRX\ZipCode\Exceptions\InvalidZipCode;
 
 class Zip extends BaseClass {
 

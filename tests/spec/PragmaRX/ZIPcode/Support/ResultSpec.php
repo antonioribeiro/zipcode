@@ -1,13 +1,13 @@
 <?php
 
-namespace spec\PragmaRX\ZIPcode\Support;
+namespace spec\PragmaRX\ZipCode\Support;
 
 // require __DIR__.'/../Data.php'; /// you may need to uncomment this
 
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
-use PragmaRX\ZIPcode\Support\WebService;
+use PragmaRX\ZipCode\Support\WebService;
 
 use Data;
 
@@ -22,7 +22,7 @@ class ResultSpec extends ObjectBehavior
 
 	public function it_is_initializable()
     {
-        $this->shouldHaveType('PragmaRX\ZIPcode\Support\Result');
+        $this->shouldHaveType('PragmaRX\ZipCode\Support\Result');
     }
 
 	public function it_can_parse_an_address_and_get_properties_from_it()

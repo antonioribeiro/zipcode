@@ -1,8 +1,8 @@
 <?php
 
-namespace PragmaRX\ZIPcode\Support;
+namespace PragmaRX\ZipCode\Support;
 
-use PragmaRX\ZIPcode\Exceptions\WebServicesNotFound;
+use PragmaRX\ZipCode\Exceptions\WebServicesNotFound;
 use PragmaRX\Support\Timer;
 
 class Finder extends BaseClass implements FinderInterface {
@@ -84,7 +84,7 @@ class Finder extends BaseClass implements FinderInterface {
 	 * A general search zip by web service method.
 	 *
 	 * @param $webService
-	 * @throws \PragmaRX\ZIPcode\Exceptions\WebServicesNotFound
+	 * @throws \PragmaRX\ZipCode\Exceptions\WebServicesNotFound
 	 * @return bool|mixed
 	 */
 	public function searchZipUsingWebService($webService)

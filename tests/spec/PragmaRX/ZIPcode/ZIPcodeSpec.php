@@ -1,21 +1,21 @@
 <?php
 
-namespace spec\PragmaRX\ZIPcode;
+namespace spec\PragmaRX\ZipCode;
 
 //require __DIR__.'/Data.php'; /// you may need to uncomment this
 
 use PhpSpec\ObjectBehavior;
-use PragmaRX\ZIPcode\Support\Result;
-use PragmaRX\ZIPcode\Support\WebService;
-use PragmaRX\ZIPcode\Support\Country;
-use PragmaRX\ZIPcode\Support\Zip;
+use PragmaRX\ZipCode\Support\Result;
+use PragmaRX\ZipCode\Support\WebService;
+use PragmaRX\ZipCode\Support\Country;
+use PragmaRX\ZipCode\Support\Zip;
 use Prophecy\Argument;
-use PragmaRX\ZIPcode\Support\Finder;
-use PragmaRX\ZIPcode\Support\Http;
+use PragmaRX\ZipCode\Support\Finder;
+use PragmaRX\ZipCode\Support\Http;
 
 use Data;
 
-class ZIPCodeSpec extends ObjectBehavior
+class ZipCodeSpec extends ObjectBehavior
 {
 	private $webService;
 
@@ -36,24 +36,24 @@ class ZIPCodeSpec extends ObjectBehavior
 
 	public function it_is_initializable()
 	{
-		$this->shouldHaveType('PragmaRX\ZIPcode\ZIPcode');
+		$this->shouldHaveType('PragmaRX\ZipCode\ZipCode');
 	}
 
 	public function it_has_webServices()
 	{
-		$this->getWebServices()->shouldHaveType('PragmaRX\ZIPcode\Support\WebServices');
+		$this->getWebServices()->shouldHaveType('PragmaRX\ZipCode\Support\WebServices');
 	}
 
 	public function it_can_change_a_country_and_load_webservices()
 	{
 		$this->setCountry('US');
 
-		$this->getWebServices()->shouldHaveType('PragmaRX\ZIPcode\Support\WebServices');
+		$this->getWebServices()->shouldHaveType('PragmaRX\ZipCode\Support\WebServices');
 	}
 
 	public function it_throws_on_unavailable_country()
 	{
-		$this->shouldThrow('PragmaRX\ZIPcode\Exceptions\WebServicesNotFound')->duringSetCountry('ZZ');
+		$this->shouldThrow('PragmaRX\ZipCode\Exceptions\WebServicesNotFound')->duringSetCountry('ZZ');
 	}
 
 	public function it_gets_an_empty_zip_after_instantiation()
@@ -70,14 +70,14 @@ class ZIPCodeSpec extends ObjectBehavior
 
 	public function it_throws_on_invalid_webservice()
 	{
-		$this->shouldThrow('PragmaRX\ZIPcode\Exceptions\WebServicesNotFound')->duringGetWebServiceByName('ZZ');
+		$this->shouldThrow('PragmaRX\ZipCode\Exceptions\WebServicesNotFound')->duringGetWebServiceByName('ZZ');
 	}
 
 	public function it_can_find_a_webservice_by_name()
 	{
 		$this->getCountry()->setCountryData($this->data->countryArray);
 
-		$this->getWebServiceByName('testwebService')->shouldHaveType('PragmaRX\ZIPcode\Support\WebService');
+		$this->getWebServiceByName('testwebService')->shouldHaveType('PragmaRX\ZipCode\Support\WebService');
 	}
 
 	public function it_can_set_a_zip()

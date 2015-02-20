@@ -1,9 +1,9 @@
 <?php
 
-namespace PragmaRX\ZIPcode\Support;
+namespace PragmaRX\ZipCode\Support;
 
 
-use PragmaRX\ZIPcode\Exceptions\WebServicesNotFound;
+use PragmaRX\ZipCode\Exceptions\WebServicesNotFound;
 
 class WebService {
 
@@ -262,7 +262,7 @@ class WebService {
 	 *
 	 * @param $webService
 	 * @return array
-	 * @throws \PragmaRX\ZIPcode\Exceptions\WebServicesNotFound
+	 * @throws \PragmaRX\ZipCode\Exceptions\WebServicesNotFound
 	 */
 	public function getWebServiceInfo($webService)
 	{

@@ -1,4 +1,4 @@
-# ZIPcode
+# ZipCode
 
 [![Latest Stable Version](https://poser.pugx.org/pragmarx/zipcode/v/stable.png)](https://packagist.org/packages/pragmarx/zipcode) [![License](https://poser.pugx.org/pragmarx/zipcode/license.png)](https://packagist.org/packages/pragmarx/zipcode)
 
@@ -7,17 +7,17 @@
 You can use it in Laravel:
 
 ```php
-ZIPcode::setCountry('US');
+ZipCode::setCountry('US');
 
 return Response::make(
-    ZIPcode::find('10006')
+    ZipCode::find('10006')
 );
 ```
 
 Or outside it:
 
 ```php
-$z = new PragmaRX\ZIPcode\ZIPcode;
+$z = new PragmaRX\ZipCode\ZipCode;
 
 return $z->find('20250030')->toArray();
 ```
@@ -25,7 +25,7 @@ return $z->find('20250030')->toArray();
 It automatically renders a JSON if you try to access it as string, but you still can:
 
 ```php
-$result = ZIPcode::find('10006');
+$result = ZipCode::find('10006');
 
 $json = $result->toJson();
 $array = $result->toArray();
@@ -34,40 +34,40 @@ $array = $result->toArray();
 Select your preferred web service:
 
 ```php
-ZIPcode::setPreferredWebService('Zippopotamus');
+ZipCode::setPreferredWebService('Zippopotamus');
 ```
 
 Get a web service by name, change things on it and find an address/city with it:
 
 ```php
-$webService = ZIPcode::getWebServiceByName('Zippopotamus');
+$webService = ZipCode::getWebServiceByName('Zippopotamus');
 
 $webSerivice->setUrl('http://api.zippopotam.ca');
 
-return ZIPcode::find('20250030', $webService);
+return ZipCode::find('20250030', $webService);
 ```
 
 Create a new web service and add it to the list:
 
 ```php
-$webService = new PragmaRX\ZIPcode\Support\WebService;
+$webService = new PragmaRX\ZipCode\Support\WebService;
 
 $webSerivice->setUrl('http://api.zippopotam.ca');
 $webSerivice->setQuery('/%country%/%zip_code%');
 
-ZIPcode::addWebService($webService);
+ZipCode::addWebService($webService);
 ```
 
 Change the user agent Guzzle will use to access the web service:
 
 ```php
-ZIPcode::setUserAgent('Googlebot/2.1 (+http://www.google.com/bot.html)');
+ZipCode::setUserAgent('Googlebot/2.1 (+http://www.google.com/bot.html)');
 ```
 
 How much time it took to find a zip?:
 
 ```php
-$result = ZIPcode::find('0200');
+$result = ZipCode::find('0200');
 
 echo $result->getTimer();
 ```
@@ -75,18 +75,18 @@ echo $result->getTimer();
 Get a list of all available countries:
 
 ```php
-$array = ZIPcode::getAvailableCountries();
+$array = ZipCode::getAvailableCountries();
 ```
 
 Dynamically change query parameters, so if you have a [Geonames](http://www.geonames.org/) login, you can set it by doing:
 
 ```php
-ZIPcode::setQueryParameter('geonames_api_login', 'yourusername');
+ZipCode::setQueryParameter('geonames_api_login', 'yourusername');
 ```
 
 ## Web Services
 
-This package uses web services all around the world to provide addresses and cities information. There are at least 2 web services available to all countries (Brazil currently has 6), if ZIPcode cannot access one or doesn't find a zip on it, it automatically falls back to the others. If you know of any other web services available that could be better than those, please create an issue or PR with it.
+This package uses web services all around the world to provide addresses and cities information. There are at least 2 web services available to all countries (Brazil currently has 6), if ZipCode cannot access one or doesn't find a zip on it, it automatically falls back to the others. If you know of any other web services available that could be better than those, please create an issue or PR with it.
 
 ## Result
 
@@ -133,7 +133,7 @@ This is an example of what you get when you search a Zip with it:
 }
 ```
 
-ZIPcode returns a `PragmaRX\ZIPcode\Support\Result` object and all properties can be accessed:
+ZipCode returns a `PragmaRX\ZipCode\Support\Result` object and all properties can be accessed:
 
 * As array
 * As string, which will make it return a JSON
@@ -153,19 +153,19 @@ Route::any('zipcode', function() {
 
     echo
         Form::open(array('url' => 'zipcode')) .
-        Form::select('country', ZIPcode::getAvailableCountries(), Input::get('country')) .
+        Form::select('country', ZipCode::getAvailableCountries(), Input::get('country')) .
         Form::text('zipcode', Input::get('zipcode')) .
         Form::submit('go!') .
         Form::close();
 
     if (Input::get('country'))
     {
-        ZIPcode::setCountry(Input::get('country'));
+        ZipCode::setCountry(Input::get('country'));
 
-        ZIPcode::setQueryParameter('geonames_api_login', 'demo');
+        ZipCode::setQueryParameter('geonames_api_login', 'demo');
 
         echo '<pre>';
-        var_dump(ZIPcode::find(Input::get('zipcode'))->toArray());
+        var_dump(ZipCode::find(Input::get('zipcode'))->toArray());
         echo '</pre>';
     }
 
@@ -228,7 +228,7 @@ And execute
 
 Add the service provider to your app/config/app.php:
 
-    'PragmaRX\ZIPcode\Vendor\Laravel\ServiceProvider',
+    'PragmaRX\ZipCode\Vendor\Laravel\ServiceProvider',
 
 ## Author
 
@@ -236,7 +236,7 @@ Add the service provider to your app/config/app.php:
 
 ## License
 
-ZIPcode is licensed under the BSD 3-Clause License - see the `LICENSE` file for details
+ZipCode is licensed under the BSD 3-Clause License - see the `LICENSE` file for details
 
 ## Contributing
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace PragmaRX\ZIPcode\Support;
+namespace PragmaRX\ZipCode\Support;
 
 interface HttpInterface
 {

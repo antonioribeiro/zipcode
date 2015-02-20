@@ -1,13 +1,13 @@
 <?php
 
-namespace PragmaRX\ZIPcode\Support;
+namespace PragmaRX\ZipCode\Support;
 
 use ArrayIterator;
 use Countable;
 use ArrayAccess;
 use Traversable;
 use IteratorAggregate;
-use PragmaRX\ZIPcode\Exceptions\WebServicesNotFound;
+use PragmaRX\ZipCode\Exceptions\WebServicesNotFound;
 
 class WebServices implements ArrayAccess, IteratorAggregate, Countable {
 
