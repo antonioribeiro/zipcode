@@ -39,16 +39,6 @@ class ServiceProvider extends PragmaRXServiceProvider {
 	protected $packageNameCapitalized = 'ZipCode';
 
 	/**
-	 * This is the boot method for this ServiceProvider
-	 *
-	 * @return void
-	 */
-	public function wakeUp()
-	{
-
-	}
-
-	/**
 	 * Register the service provider.
 	 *
 	 * @return void
