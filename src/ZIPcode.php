@@ -2,15 +2,15 @@
 
 namespace PragmaRX\ZipCode;
 
-use PragmaRX\ZipCode\Support\BaseClass;
 use PragmaRX\ZipCode\Support\Finder;
-use PragmaRX\ZipCode\Support\FinderInterface;
 use PragmaRX\ZipCode\Support\Zip;
 use PragmaRX\ZipCode\Support\Result;
 use PragmaRX\ZipCode\Support\Country;
+use PragmaRX\ZipCode\Support\BaseClass;
+use PragmaRX\ZipCode\Support\FinderInterface;
+use PragmaRX\ZipCode\Contracts\ZipCode as ZipCodeContract;
 
-
-class ZipCode extends BaseClass
+class ZipCode extends BaseClass implements ZipCodeContract
 {
 	/**
 	 * The HTTP class.
@@ -254,5 +254,5 @@ class ZipCode extends BaseClass
 	{
 		return $this->zip->formatForCountry($zip, $country);
 	}
-	
+
 }
