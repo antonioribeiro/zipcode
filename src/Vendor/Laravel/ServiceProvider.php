@@ -5,7 +5,6 @@ namespace PragmaRX\ZipCode\Vendor\Laravel;
 use PragmaRX\ZipCode\ZipCode;
 use PragmaRX\ZipCode\Support\Http;
 use PragmaRX\ZipCode\Support\Finder;
-
 use PragmaRX\Support\ServiceProvider as PragmaRXServiceProvider;
 
 class ServiceProvider extends PragmaRXServiceProvider {
@@ -39,6 +38,13 @@ class ServiceProvider extends PragmaRXServiceProvider {
 	protected $packageNameCapitalized = 'ZipCode';
 
 	/**
+	 * Indicates if loading of the provider is deferred.
+	 *
+	 * @var bool
+	 */
+	protected $defer = true;
+
+	/**
 	 * Register the service provider.
 	 *
 	 * @return void
@@ -68,26 +74,29 @@ class ServiceProvider extends PragmaRXServiceProvider {
 	 */
 	private function registerZipCode()
 	{
-		$this->app['zipcode'] = $this->app->share(function($app)
-		{
-			$z = new ZipCode(
-				new Finder(
-					new Http
-				)
-			);
-
-			if ($this->getConfig('country'))
+		$this->app[$this->$packageName] = $this->app->bindShared(
+			'PragmaRX\ZipCode\Contracts\ZipCode',
+			function($app)
 			{
-				$z->setCountry($this->getConfig('country'));
-			}
+				$z = new ZipCode(
+					new Finder(
+						new Http
+					)
+				);
 
-			if ($this->getConfig('preferred_web_service'))
-			{
-				$z->setPreferredWebService($this->getConfig('preferred_web_service'));
-			}
+				if ($this->getConfig('country'))
+				{
+					$z->setCountry($this->getConfig('country'));
+				}
 
-			return $z;
-		});
+				if ($this->getConfig('preferred_web_service'))
+				{
+					$z->setPreferredWebService($this->getConfig('preferred_web_service'));
+				}
+
+				return $z;
+			}
+		);
 	}
 
 	/**
