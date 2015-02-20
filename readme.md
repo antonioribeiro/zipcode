@@ -207,7 +207,7 @@ This is a really nice service and you should use it as your first option, but fo
 
 ## Requirements
 
-- Laravel 4.1+
+- Laravel 4.1+ or 5+
 - PHP 5.4+
 
 ## Installing
