@@ -110,15 +110,13 @@ class ServiceProvider extends PragmaRXServiceProvider {
 	}
 
 	/**
-	 * Get the full path of the stub config file.
+	 * Get the current package directory.
 	 *
 	 * @return string
 	 */
-	public function getStubConfigPath()
+	public function getPackageDir()
 	{
-		$back = DIRECTORY_SEPARATOR.'..';
-
-		return __DIR__.$back.$back.DIRECTORY_SEPARATOR.'config'.DIRECTORY_SEPARATOR.'config.php';
+		return __DIR__.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'..';
 	}
 
 }
