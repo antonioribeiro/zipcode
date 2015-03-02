@@ -208,23 +208,17 @@ If you need a different one, please ask or just send a pull request with it.
 
 ## Installing
 
-Require the `zipcode` package by **executing** the following command in your command line:
+Install it using [Composer](https://getcomposer.org/doc/01-basic-usage.md):
 
-    composer require "pragmarx/zipcode" "~1.0"
+    composer require "pragmarx/zipcode"
 
-**Or** add to your composer.json:
-
-    "require": {
-        "pragmarx/zipcode": "~1.0"
-    }
-
-And execute
-
-    composer update
-
-Add the service provider to your app/config/app.php:
+Edit your app/config/app.php and add the Service Provider
 
     'PragmaRX\ZipCode\Vendor\Laravel\ServiceProvider',
+
+And the Facade
+
+    'ZipCode' => 'PragmaRX\ZipCode\Vendor\Laravel\Facade',
 
 ## Usign It
 
