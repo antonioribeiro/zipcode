@@ -81,7 +81,7 @@ $array = ZipCode::getAvailableCountries();
 Dynamically change query parameters, so if you have a [Geonames](http://www.geonames.org/) login, you can set it by doing:
 
 ```php
-ZipCode::setQueryParameter('geonames_api_login', 'yourusername');
+ZipCode::setQueryParameter('geonames_username', 'yourusername');
 ```
 
 ## Web Services
@@ -162,7 +162,7 @@ Route::any('zipcode', function() {
     {
         ZipCode::setCountry(Input::get('country'));
 
-        ZipCode::setQueryParameter('geonames_api_login', 'demo');
+        ZipCode::setQueryParameter('geonames_username', 'demo');
 
         echo '<pre>';
         var_dump(ZipCode::find(Input::get('zipcode'))->toArray());
@@ -200,10 +200,6 @@ There are web services tested for the following countries:
 * United States (US)
 
 If you need a different one, please ask or just send a pull request with it.
-
-## About Geonames
-
-This is a really nice service and you should use it as your first option, but for it to be free (for 30,000 credits/day) you have to [create an user account](http://www.geonames.org/login) **and** [enable the free webservices](http://www.geonames.org/manageaccount).
 
 ## Requirements
 
@@ -263,6 +259,32 @@ class WelcomeController extends Controller {
 	}
 
 }
+```
+
+## About Geonames
+
+This is a really nice service and you should use it as your first option, but for it to be free (for 30,000 credits/day) you have to [create an user account](http://www.geonames.org/login) **and** [enable the free webservices](http://www.geonames.org/manageaccount). And configure ZipCode to use your username:
+
+```
+ZipCode::setCountry('GB');
+
+ZipCode::setQueryParameter('geonames_username', 'yourusername');
+
+ZipCode::find('L23YL');
+```
+
+And you can also use config.php to set it:
+
+```
+return array(
+
+	...
+
+	'query_parameters' => array(
+		'geonames_username' => 'demo',
+	)
+
+);
 ```
 
 ## Author
