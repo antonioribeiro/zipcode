@@ -310,4 +310,5 @@ class WebService {
 			$this->setQueryParameter($key, $parameter);
 		}
 	}
+
 }

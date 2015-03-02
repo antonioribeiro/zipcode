@@ -78,7 +78,7 @@ class ServiceProvider extends PragmaRXServiceProvider {
 			'PragmaRX\ZipCode\Contracts\ZipCode',
 			function($app)
 			{
-				$z = new ZipCode(
+				$zipCode = new ZipCode(
 					new Finder(
 						new Http
 					)
@@ -86,15 +86,20 @@ class ServiceProvider extends PragmaRXServiceProvider {
 
 				if ($this->getConfig('country'))
 				{
-					$z->setCountry($this->getConfig('country'));
+					$zipCode->setCountry($this->getConfig('country'));
 				}
 
 				if ($this->getConfig('preferred_web_service'))
 				{
-					$z->setPreferredWebService($this->getConfig('preferred_web_service'));
+					$zipCode->setPreferredWebService($this->getConfig('preferred_web_service'));
 				}
 
-				return $z;
+				if ($this->getConfig('query_parameters'))
+				{
+					$zipCode->setQueryParameters($this->getConfig('query_parameters'));
+				}
+
+				return $zipCode;
 			}
 		);
 	}

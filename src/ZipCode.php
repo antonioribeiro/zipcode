@@ -53,7 +53,7 @@ class ZipCode extends BaseClass implements ZipCodeContract
 
 		$this->result = new Result();
 
-		$this->country = new Country();
+		$this->country = new Country(array());
 
 		$this->zip = new Zip($this->country);
 
@@ -230,6 +230,19 @@ class ZipCode extends BaseClass implements ZipCodeContract
 	public function setQueryParameter($queryParameter, $value)
 	{
 		$this->finder->setQueryParameter($queryParameter, $value);
+	}
+
+	/**
+	 * Set query parameters.
+	 *
+	 * @param $parameters
+	 */
+	public function setQueryParameters($parameters)
+	{
+		foreach ($parameters as $key => $value)
+		{
+			$this->setQueryParameter($key, $value);
+		}
 	}
 
 	/**

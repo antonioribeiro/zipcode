@@ -6,4 +6,8 @@ return array(
 
 	'preferred_web_service' => null,
 
+	'query_parameters' => array(
+		'geonames_username' => 'demo',
+	)
+
 );
