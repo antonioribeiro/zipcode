@@ -92,7 +92,7 @@ This package uses web services all around the world to provide addresses and cit
 
 This is an example of what you get when you search a Zip with it:
 
-```json
+```javascript
 {
    country_id:"CH",
    country_name:"Switzerland",
