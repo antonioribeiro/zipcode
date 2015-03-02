@@ -1,17 +1,17 @@
 ## Change Log
 
-## [1.5.1] - 2015-03-02
-### Add
+### [1.5.1] - 2015-03-02
+#### Add
 - Allow it to use Guzzle 5
 
-## [1.5.1] - 2015-02-21
-### Changed
+### [1.5.1] - 2015-02-21
+#### Changed
 - Renamed to ZipCode
 
-## [1.5.0] - 2015-02-20
-### Added
+### [1.5.0] - 2015-02-20
+#### Added
 - Laravel 5 compatibility.
 
-## [1.0.0] - 2014-04-29
-### Added
+### [1.0.0] - 2014-04-29
+#### Added
 - First version.
