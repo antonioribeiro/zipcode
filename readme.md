@@ -220,7 +220,7 @@ And the Facade
 
     'ZipCode' => 'PragmaRX\ZipCode\Vendor\Laravel\Facade',
 
-## Usign It
+## Using It
 
 #### Instantiate it directly
 
