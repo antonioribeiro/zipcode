@@ -5,6 +5,7 @@ namespace PragmaRX\ZipCode\Vendor\Laravel;
 use PragmaRX\ZipCode\ZipCode;
 use PragmaRX\ZipCode\Support\Http;
 use PragmaRX\ZipCode\Support\Finder;
+use Illuminate\Foundation\Application;
 use PragmaRX\Support\ServiceProvider as PragmaRXServiceProvider;
 
 class ServiceProvider extends PragmaRXServiceProvider {
@@ -74,7 +75,8 @@ class ServiceProvider extends PragmaRXServiceProvider {
 	 */
 	private function registerZipCode()
 	{
-		$this->app[$this->packageName] = $this->app->bindShared(
+		$method = version_compare(Application::VERSION, '5.2', '>=') ? 'singleton' : 'bindShared';
+		$this->app[$this->packageName] = $this->app->$method(
 			'PragmaRX\ZipCode\Contracts\ZipCode',
 			function($app)
 			{
