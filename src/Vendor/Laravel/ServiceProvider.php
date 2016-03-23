@@ -74,7 +74,7 @@ class ServiceProvider extends PragmaRXServiceProvider {
 	 */
 	private function registerZipCode()
 	{
-		$this->app[$this->packageName] = $this->app->bindShared(
+		$this->app[$this->packageName] = $this->app->singleton(
 			'PragmaRX\ZipCode\Contracts\ZipCode',
 			function($app)
 			{
