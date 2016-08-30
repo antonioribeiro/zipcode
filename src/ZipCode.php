@@ -265,7 +265,9 @@ class ZipCode extends BaseClass implements ZipCodeContract
 	 */
 	public function formatForCountry($zip = null, $country = null)
 	{
-		return $this->zip->formatForCountry($zip, $country);
+	    if (trim($zip))
+        {
+            return $this->zip->formatForCountry($zip, $country);
+        }
 	}
-
 }
