@@ -42,7 +42,7 @@
                 "PragmaRX\\ZipCode\\Vendor\\Laravel\\ServiceProvider"
             ],
             "aliases": {
-                "ZipCode" : "PragmaRX\\ZipCode\\Vendor\\Laravel\\Facade",
+                "ZipCode" : "PragmaRX\\ZipCode\\Vendor\\Laravel\\Facade"
             }
         }
     },
