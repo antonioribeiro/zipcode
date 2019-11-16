@@ -36,6 +36,14 @@
         "component": "package",
         "branch-alias": {
             "dev-master": "1.6.x-dev"
+        },
+        "laravel": {
+            "providers": [
+                "PragmaRX\\ZipCode\\Vendor\\Laravel\\ServiceProvider"
+            ],
+            "aliases": {
+                "ZipCode" : "PragmaRX\\ZipCode\\Vendor\\Laravel\\Facade",
+            }
         }
     },
 
