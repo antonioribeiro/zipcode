@@ -4,7 +4,7 @@ $country = 'CA';
 
 return [
 
-	'zip_length' => 6,
+	'zip_length' => 0,
 
 	'country_id' => $country,
 
